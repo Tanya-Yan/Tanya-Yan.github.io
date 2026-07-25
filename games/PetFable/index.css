@@ -911,13 +911,40 @@ button:active { transform: scale(0.95); }
     border-radius: 0 0 0 90px;
 }
 
+/* The lazy river loops around the outside of everything, so it sits
+   behind the main pool and reads as a ring of water. */
+.lazyriver {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    margin-left: -152px;
+    width: 304px;
+    height: 122px;
+    border: 11px solid rgba(125, 211, 252, 0.55);
+    border-radius: 50%;
+    box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.35);
+    z-index: -1;
+}
+
+.surfer {
+    bottom: 74px;
+    left: 30px;
+    font-size: 1.7rem;
+    animation: surf 3.2s ease-in-out infinite;
+}
+
+@keyframes surf {
+    0%, 100% { transform: translate(0, 0)      rotate(-8deg); }
+    50%      { transform: translate(14px, -9px) rotate(8deg); }
+}
+
 .splash-pool {
     position: absolute;
     bottom: 20px;
     left: 50%;
-    margin-left: -130px;
-    width: 260px;
-    height: 96px;
+    margin-left: -138px;
+    width: 276px;
+    height: 104px;
     background: linear-gradient(180deg, #7dd3fc, #0284c7);
     border: 6px solid #e0f2fe;
     border-radius: 50%;
@@ -949,6 +976,143 @@ button:active { transform: scale(0.95); }
     right: 34px;
     font-size: 2.2rem;
     animation: floatUp 2.8s ease-in-out infinite;
+}
+
+/* --- water ferris wheel --- */
+
+.water-wheel {
+    position: absolute;
+    top: 26px;
+    right: 22px;
+    width: 78px;
+    height: 78px;
+    border: 6px solid #22d3ee;
+    border-radius: 50%;
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.7);
+    animation: spin 9s linear infinite;
+}
+
+.ww-spoke {
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    right: -6px;
+    height: 4px;
+    margin-top: -2px;
+    background: #a5f3fc;
+    border-radius: 999px;
+}
+.wws1 { transform: rotate(45deg); }
+.wws2 { transform: rotate(-45deg); }
+
+.ww-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    background: #f472b6;
+    border-radius: 50%;
+}
+
+/* --- water roller coaster --- */
+
+.wcoaster {
+    position: absolute;
+    top: 2px;
+    left: 8px;
+    width: 180px;
+    height: 46px;
+}
+
+.wtrack {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    right: 0;
+    height: 24px;
+    border-top: 5px solid #a78bfa;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+.wcar {
+    position: absolute;
+    top: 2px;
+    font-size: 1.1rem;
+    animation: wride 4.5s linear infinite;
+}
+
+@keyframes wride {
+    0%   { left: 0;   transform: translateY(16px) rotate(-14deg); }
+    50%  { left: 46%; transform: translateY(-4px) rotate(0deg); }
+    100% { left: 88%; transform: translateY(16px) rotate(14deg); }
+}
+
+/* --- diving board --- */
+
+.divingboard { position: absolute; bottom: 96px; left: 12px; }
+
+.db-plank {
+    position: absolute;
+    width: 66px;
+    height: 8px;
+    background: #f8fafc;
+    border-radius: 4px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    /* Springs up and down like a real board. */
+    transform-origin: left center;
+    animation: springboard 2.4s ease-in-out infinite;
+}
+
+@keyframes springboard {
+    0%, 100% { transform: rotate(0deg); }
+    50%      { transform: rotate(4deg); }
+}
+
+.db-post {
+    position: absolute;
+    top: 8px;
+    left: 6px;
+    width: 8px;
+    height: 34px;
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+/* --- water trampoline, floating on the surface --- */
+
+.watertramp {
+    position: absolute;
+    bottom: 62px;
+    left: 50%;
+    margin-left: -46px;
+    width: 92px;
+    height: 26px;
+    background: radial-gradient(ellipse at 50% 35%, #1e1b4b, #4338ca);
+    border: 5px solid #fbbf24;
+    border-radius: 50%;
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
+    animation: springy 1.3s ease-in-out infinite;
+}
+
+/* --- waves from the wave machine --- */
+
+.wave {
+    position: absolute;
+    bottom: 40px;
+    width: 70px;
+    height: 16px;
+    border-top: 5px solid rgba(255, 255, 255, 0.75);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    animation: rollWave 2.6s ease-in-out infinite;
+}
+.wv1 { left: 24px; }
+.wv2 { right: 24px; animation-delay: 1.3s; }
+
+@keyframes rollWave {
+    0%, 100% { transform: translateY(0) scaleX(0.9); opacity: 0.5; }
+    50%      { transform: translateY(-9px) scaleX(1.1); opacity: 1; }
 }
 
 .rainbow { top: 4px; right: 16px; font-size: 2.6rem; }

@@ -82,6 +82,40 @@ const EXTRAS = {
         { icon: '🍦', label: 'Ice Cream', happy: 26, energy: 8, hunger: 18,
           says: ['ICE CREAM! 🍦', 'Mmm, strawberry! 🍓',
                  'The shop knows me, so it\'s free! 🌟'] }
+    ],
+
+    park: [
+        { icon: '🤸', label: 'Water Tramp', happy: 24, energy: -16, hunger: -6,
+          says: ['BOING into the water! 💦', 'Double bounce! 🤸',
+                 'The wet trampoline is the best one! 💧'] },
+
+        { icon: '🤽', label: 'Diving Board', happy: 22, energy: -12, hunger: -5,
+          says: ['Bouncy bouncy... SPLASH! 🤽', 'Belly flop! 😂',
+                 'A perfect ten! 🏅'] },
+
+        { icon: '🎢', label: 'Water Coaster', happy: 28, energy: -18, hunger: -8,
+          says: ['WHOOOOSH! 🎢', 'Hands in the air! 🙌',
+                 'That drop was HUGE! 💦'] },
+
+        { icon: '🛟', label: 'Lazy River', happy: 14, energy: 10, hunger: -3,
+          says: ['Just floating along... 🛟', 'So peaceful. 😌'] },
+
+        { icon: '🎡', label: 'Water Wheel', happy: 25, energy: -10, hunger: -5,
+          says: ['Round and round over the water! 🎡',
+                 'I can see the whole park from up here! 👀',
+                 'It dunks you at the bottom! 💦'] },
+
+        { icon: '🌊', label: 'Wave Pool', happy: 26, energy: -14, hunger: -6,
+          says: ['Here comes a BIG one! 🌊', 'The wave machine! 🌊',
+                 'That wave was taller than me! 😲'] },
+
+        { icon: '🏄', label: 'Surfing', happy: 30, energy: -20, hunger: -8,
+          says: ['Surf\'s UP! 🏄', 'Look, no hands! 🤙',
+                 'I rode it all the way in! 🌊', 'Cowabunga! 🏄'] },
+
+        { icon: '🏊', label: 'Big Pool', happy: 18, energy: -8, hunger: -4,
+          says: ['Splashing in the big pool! 🏊', 'Race you to the end! 💦',
+                 'I can do a handstand underwater! 🤸'] }
     ]
 };
 
@@ -345,7 +379,7 @@ function render() {
         house: '🎾<span>Play</span>',
         bedroom: '🎾<span>Play</span>',
         pool: '🏊<span>Swim</span>',
-        park: '🎢<span>Slide</span>',
+        park: '🎢<span>Water Slide</span>',
         tramp: '🤸<span>Bounce</span>',
         fair: '🎈<span>Pop</span>',
         show: '🎤<span>Perform</span>'

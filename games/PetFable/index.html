@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pet Fable</title>
-    <!-- The ?v= number on the end is a trick to beat the browser's memory. The
+    <!-- The ?v=7 number on the end is a trick to beat the browser's memory. The
          browser saves files to load pages faster, and it decides they are
          the same file by their name. Change the name even slightly and it
          fetches a fresh copy. Bump this number after big changes. -->
-    <link rel="stylesheet" href="index.css?v=6">
+    <link rel="stylesheet" href="index.css?v=7">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -152,6 +152,37 @@
                     <span class="jet j1"></span>
                     <span class="jet j2"></span>
                     <span class="jet j3"></span>
+
+                    <!-- Water ferris wheel, turning over the pool. -->
+                    <div class="water-wheel">
+                        <span class="ww-spoke wws1"></span>
+                        <span class="ww-spoke wws2"></span>
+                        <span class="ww-hub"></span>
+                    </div>
+
+                    <!-- The water roller coaster track, up on the skyline. -->
+                    <div class="wcoaster">
+                        <span class="wtrack"></span>
+                        <span class="wcar">🛶</span>
+                    </div>
+
+                    <!-- Diving board sticking out over the water. -->
+                    <div class="divingboard">
+                        <span class="db-plank"></span>
+                        <span class="db-post"></span>
+                    </div>
+
+                    <!-- Water trampoline floating on the surface. -->
+                    <div class="watertramp"></div>
+
+                    <!-- Waves from the wave machine. -->
+                    <span class="wave wv1"></span>
+                    <span class="wave wv2"></span>
+
+                    <!-- The lazy river, curling round the outside. -->
+                    <div class="lazyriver"></div>
+
+                    <span class="prop surfer">🏄</span>
                     <span class="prop ring">🛟</span>
                     <span class="prop rainbow">🌈</span>
                 </div>
@@ -262,6 +293,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
 </body>
 </html>
