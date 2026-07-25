@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pet Fable</title>
+    <!-- The ?v= number on the end is a trick to beat the browser's memory. The
+         browser saves files to load pages faster, and it decides they are
+         the same file by their name. Change the name even slightly and it
+         fetches a fresh copy. Bump this number after big changes. -->
+    <link rel="stylesheet" href="index.css?v=6">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+
+        <!-- ============ 1. THE EGG ============ -->
+        <div id="egg-screen" class="screen active">
+            <h1>Pet Fable</h1>
+            <p>A dragon egg! It's warm, and something is moving inside.</p>
+
+            <div id="egg">
+                <span class="crack crack-1"></span>
+                <span class="crack crack-2"></span>
+                <span class="crack crack-3"></span>
+            </div>
+
+            <p id="egg-hint">Tap the egg to help it hatch!</p>
+        </div>
+
+        <!-- ============ 2. NAMING ============ -->
+        <div id="name-screen" class="screen">
+            <h1>It hatched!</h1>
+            <div id="name-dragon" class="dragon-slot"></div>
+            <p>A baby dragon! What will you call it?</p>
+
+            <input id="name-input" type="text" maxlength="14"
+                   placeholder="Type a name" autocomplete="off">
+            <p id="name-warning" class="warning hidden">Your dragon needs a name!</p>
+
+            <button id="name-btn">That's the one!</button>
+        </div>
+
+        <!-- ============ 3. LOOKING AFTER IT ============ -->
+        <div id="pet-screen" class="screen">
+
+            <h2 id="pet-name">Dragon</h2>
+
+            <div class="purse">
+                <span id="coins">🪙 10</span>
+                <span id="prizes">🧸 0</span>
+            </div>
+
+            <div class="bars">
+                <div class="bar-row">
+                    <span class="bar-label">🍖 Hunger</span>
+                    <span class="bar-track"><span class="bar-fill" id="bar-hunger"></span></span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">💖 Happy</span>
+                    <span class="bar-track"><span class="bar-fill" id="bar-happy"></span></span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">⚡ Energy</span>
+                    <span class="bar-track"><span class="bar-fill" id="bar-energy"></span></span>
+                </div>
+            </div>
+
+            <div id="stage" class="stage-house">
+                <div id="speech"></div>
+
+                <!-- ===== Room 1: outside the heart house ===== -->
+                <div class="room room-house active">
+                    <!-- The driveway runs from the front door down to the
+                         bottom of the screen, behind the house. -->
+                    <div id="driveway">
+                        <span class="dash d1"></span>
+                        <span class="dash d2"></span>
+                        <span class="dash d3"></span>
+                    </div>
+                    <span class="prop car">🛵</span>
+                    <div id="home">
+                        <div id="window">
+                            <span class="pane-h"></span>
+                            <span class="pane-v"></span>
+                        </div>
+                        <div id="door" title="Go inside">
+                            <span class="knob"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Room 2: the bedroom ===== -->
+                <div class="room room-bedroom">
+                    <div class="wall">
+                        <span class="star s1">⭐</span>
+                        <span class="star s2">✨</span>
+                        <span class="star s3">🌙</span>
+                        <div class="room-window"><span class="pane-h"></span><span class="pane-v"></span></div>
+                    </div>
+                    <div class="lamp"><span class="shade"></span><span class="pole"></span></div>
+                    <div class="bed">
+                        <span class="pillow"></span>
+                        <span class="blanket"></span>
+                    </div>
+                    <div class="rug"></div>
+                </div>
+
+                <!-- ===== Room 3: the pool ===== -->
+                <div class="room room-pool">
+                    <div class="pool">
+                        <span class="ripple r1"></span>
+                        <span class="ripple r2"></span>
+                        <span class="ripple r3"></span>
+                    </div>
+                    <div class="ladder"><span></span><span></span></div>
+                    <!-- The hot tub, off to one side of the big pool. -->
+                    <div class="hottub">
+                        <span class="bubble hb1"></span>
+                        <span class="bubble hb2"></span>
+                        <span class="bubble hb3"></span>
+                        <span class="steam st1">☁️</span>
+                        <span class="steam st2">☁️</span>
+                    </div>
+
+                    <!-- The famous ice cream shop, with a queue outside. -->
+                    <div class="shop">
+                        <span class="shop-roof"></span>
+                        <span class="shop-sign">🍦 FAMOUS ICE CREAM</span>
+                        <span class="shop-window"></span>
+                        <span class="stars-row">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <span class="prop queue">🧍🧍</span>
+
+                    <!-- Floaties bobbing on the water to keep Lydia up. -->
+                    <span class="prop floatie fl1">🛟</span>
+                    <span class="prop floatie fl2">🦩</span>
+                    <span class="prop floatie fl3">🦆</span>
+
+                    <span class="prop ball">🏐</span>
+                    <span class="prop palm">🌴</span>
+                    <span class="prop drinks">🥥</span>
+                </div>
+
+                <!-- ===== Room 4: the water park ===== -->
+                <div class="room room-park">
+                    <div class="slide"><span class="slide-rail"></span></div>
+                    <div class="splash-pool">
+                        <span class="ripple r1"></span>
+                        <span class="ripple r2"></span>
+                    </div>
+                    <span class="jet j1"></span>
+                    <span class="jet j2"></span>
+                    <span class="jet j3"></span>
+                    <span class="prop ring">🛟</span>
+                    <span class="prop rainbow">🌈</span>
+                </div>
+
+                <!-- ===== Room 5: the trampoline park ===== -->
+                <div class="room room-tramp">
+                    <div class="tramp">
+                        <span class="tramp-mat"></span>
+                        <span class="tramp-leg tl"></span>
+                        <span class="tramp-leg tr"></span>
+                    </div>
+                    <span class="net net-l"></span>
+                    <span class="net net-r"></span>
+                    <span class="prop star-a">⭐</span>
+                    <span class="prop star-b">✨</span>
+                </div>
+
+                <!-- ===== Room 6: the amusement park ===== -->
+                <div class="room room-fair">
+                    <div class="wheel">
+                        <span class="spoke sp1"></span>
+                        <span class="spoke sp2"></span>
+                        <span class="spoke sp3"></span>
+                        <span class="hub"></span>
+                    </div>
+                    <div class="wheel-stand"></div>
+                    <div class="tent"><span class="tent-door"></span></div>
+                    <!-- The roller coaster: a track with a car running
+                         along it, up on the skyline behind everything. -->
+                    <div class="coaster">
+                        <span class="track"></span>
+                        <span class="coaster-car">🚃</span>
+                    </div>
+
+                    <!-- The carousel: a striped roof on a spinning pole,
+                         with horses going round. -->
+                    <div class="carousel">
+                        <span class="carousel-roof"></span>
+                        <span class="carousel-ring">
+                            <span class="horse h1">🐴</span>
+                            <span class="horse h2">🦄</span>
+                        </span>
+                        <span class="carousel-pole"></span>
+                    </div>
+
+                    <span class="prop balloon b1">🎈</span>
+                    <span class="prop balloon b2">🎈</span>
+                    <span class="prop popcorn">🍿</span>
+                    <span class="prop candyfloss">🍭</span>
+                    <span class="prop arcade">🕹️</span>
+                    <div class="bunting">
+                        <span class="flag f1"></span>
+                        <span class="flag f2"></span>
+                        <span class="flag f3"></span>
+                        <span class="flag f4"></span>
+                    </div>
+                </div>
+
+                <!-- ===== Room 7: the show stage ===== -->
+                <!-- Reserved for shows only. Nothing else happens here. -->
+                <div class="room room-show">
+                    <div class="curtain curtain-l"></div>
+                    <div class="curtain curtain-r"></div>
+                    <div class="pelmet"></div>
+
+                    <span class="spotlight sl"></span>
+                    <span class="spotlight sr"></span>
+
+                    <div class="show-floor"></div>
+                    <div class="show-sign">✨ TONIGHT ONLY ✨</div>
+
+                    <span class="prop note n1">🎵</span>
+                    <span class="prop note n2">🎶</span>
+                    <span class="prop note n3">🎤</span>
+                </div>
+
+                <div id="pet-dragon" class="dragon-slot"></div>
+                <div id="zzz" class="hidden">💤</div>
+                <div id="floaties"></div>
+            </div>
+
+            <!-- Travelling between Lydia's places. Each button carries the
+                 room it goes to in data-room, so one piece of code runs all. -->
+            <div class="rooms-nav">
+                <button class="room-btn" data-room="house">🏠<span>Home</span></button>
+                <button class="room-btn" data-room="bedroom">🛏️<span>Bedroom</span></button>
+                <button class="room-btn" data-room="pool">🏊<span>Pool</span></button>
+                <button class="room-btn" data-room="park">🎢<span>Water Park</span></button>
+                <button class="room-btn" data-room="tramp">🤸<span>Trampoline</span></button>
+                <button class="room-btn" data-room="fair">🎡<span>Fun Fair</span></button>
+                <button class="room-btn" data-room="show">🎭<span>Show Stage</span></button>
+            </div>
+
+            <!-- Extra things to do that only exist in certain places.
+                 script.js fills this in whenever Lydia changes rooms. -->
+            <div class="extras" id="extras"></div>
+
+            <div class="actions">
+                <button class="action-btn" id="feed-btn">🍖<span>Feed</span></button>
+                <button class="action-btn" id="play-btn">🎾<span>Play</span></button>
+                <button class="action-btn" id="sleep-btn">😴<span>Sleep</span></button>
+            </div>
+
+            <button id="reset-btn" class="link-btn">Start a new egg</button>
+        </div>
+
+        <a class="back-link" href="../../">← Back to the arcade</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js?v=6"></script>
+</body>
+</html>
