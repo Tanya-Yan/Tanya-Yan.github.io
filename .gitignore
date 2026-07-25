@@ -1,0 +1,12 @@
+# Files that stay on Tanya's computer and do NOT get published to the website.
+
+# Notes about Tanya and how she likes to work. Private on purpose.
+CLAUDE.md
+JOURNAL.md
+.claude/
+
+# Junk files that macOS and Dropbox scatter around.
+.DS_Store
+Icon?
+.dropbox
+.dropbox.attr

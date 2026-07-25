@@ -1,0 +1,120 @@
+/* Tanya's Arcade homepage.
+   The colors and fonts here match Catch the Labubu on purpose, so the
+   whole site feels like one place instead of separate pages. */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    /* Same rainbow as the game. It is bigger than the screen (400%) and
+       slides around, which is what makes the colors look like they move. */
+    background: linear-gradient(135deg, #ff00cc, #333399, #00d2ff, #f953c6);
+    background-size: 400% 400%;
+    animation: rainbowBg 8s ease infinite;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes rainbowBg {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    /* The shadow keeps white text readable no matter which rainbow color
+       is behind it at the moment. */
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* The grid figures out how many cards fit per row by itself. On a phone
+   that is one, on a laptop it is three or four. No extra code needed. */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.game-card {
+    /* The frosted glass look: a see-through white layer, plus a blur of
+       whatever is behind it. */
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    border-radius: 24px;
+    padding: 30px 24px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+    /* Lifts the card slightly so it feels clickable. */
+    transform: translateY(-6px);
+    box-shadow: 0 14px 40px rgba(31, 38, 135, 0.35);
+}
+
+.game-emoji {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+}
+
+.game-blurb {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+/* A placeholder card for a game that does not exist yet. It is a <div>
+   instead of an <a>, so there is nothing to click. */
+.coming-soon {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.coming-soon:hover {
+    transform: none;
+}
+
+footer {
+    margin-top: 50px;
+    color: white;
+    opacity: 0.9;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,230 @@
+:root {
+    --primary: #ff6b6b;
+    --bg-gradient-1: #a8edea;
+    --bg-gradient-2: #fed6e3;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #ff00cc, #333399, #00d2ff, #f953c6);
+    background-size: 400% 400%;
+    animation: rainbowBg 8s ease infinite;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+}
+@keyframes rainbowBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    max-height: 900px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+@media (max-width: 500px) {
+    #game-container {
+        border-radius: 0;
+        max-height: 100vh;
+    }
+}
+
+#ui-layer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.glass-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 15px 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.8);
+    font-family: 'Fredoka One', cursive;
+    color: #4a4a4a;
+    font-size: 1.2rem;
+}
+
+.stat {
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.screen h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: var(--primary);
+    text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.1;
+}
+
+.screen p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 40px;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.4;
+    padding: 0 20px;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    font-family: 'Fredoka One', cursive;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #cc5555, 0 10px 15px rgba(0,0,0,0.2);
+    transition: all 0.1s;
+    outline: none;
+}
+
+button:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 #cc5555, 0 4px 5px rgba(0,0,0,0.2);
+}
+
+#game-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+#player {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 5rem;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    transition: left 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: left;
+}
+
+.item {
+    position: absolute;
+    font-size: 4rem;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+    will-change: top, transform;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1.1); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+}
+
+.item-monster {
+    animation: wiggle 1.5s infinite ease-in-out;
+}
+
+.item-bomb {
+    animation: spin 2.5s infinite linear;
+}
+
+.item-toilet-labubu {
+    background-image: url('toilet_labubu.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 4px solid #fff;
+    animation: wiggle 1.2s infinite ease-in-out;
+    width: 80px !important;
+    height: 80px !important;
+}
+
+.pop-animation {
+    position: absolute;
+    font-weight: bold;
+    color: #ffcc00;
+    font-size: 2.5rem;
+    font-family: 'Fredoka One', cursive;
+    text-shadow: 2px 2px 0 #fff;
+    pointer-events: none;
+    animation: floatUp 0.7s ease-out forwards;
+    z-index: 15;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    90% { transform: translateY(-70px) scale(1.6); opacity: 1; }
+    100% { transform: translateY(-80px) scale(1.7); opacity: 0; }
+}

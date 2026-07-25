@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catch the Labubu!</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui-layer">
+            <div class="glass-panel">
+                <div class="stat">Score: <span id="score">0</span></div>
+                <div class="stat">Lives: <span id="lives">❤️❤️❤️❤️❤️</span></div>
+            </div>
+        </div>
+        
+        <div id="start-screen" class="screen active">
+            <h1>Catch the Labubu!</h1>
+            <p>Catch the Labubus, Toilets (🚽), and Toilet Paper (🧻)!<br>But whatever you do, avoid the Poop (💩)!</p>
+            <p>Slide left or right to move.</p>
+            <button id="start-btn">Play Now</button>
+        </div>
+
+        <div id="game-over-screen" class="screen">
+            <h1>Game Over!</h1>
+            <p>You caught <span id="final-score">0</span> Labubus!</p>
+            <button id="restart-btn">Play Again</button>
+        </div>
+
+        <div id="game-area">
+            <div id="player">🛁</div>
+        </div>
+    </div>
+    
+    <!-- Audio elements (royalty free placeholders) -->
+    <audio id="pop-sound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"></audio>
+    <audio id="lose-sound" src="https://assets.mixkit.co/active_storage/sfx/2048/2048-preview.mp3"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
