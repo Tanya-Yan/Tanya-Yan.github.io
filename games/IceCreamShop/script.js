@@ -17,7 +17,15 @@ const FLAVOURS = [
     { id: 'blueberry',  label: 'Blueberry',  hex: '#818cf8', price: 2 },
     { id: 'bubblegum',  label: 'Bubblegum',  hex: '#f0abfc', price: 2 },
     { id: 'mango',      label: 'Mango',      hex: '#fbbf24', price: 2 },
-    { id: 'cookies',    label: 'Cookies',    hex: '#d6d3d1', price: 2 }
+    { id: 'cookies',    label: 'Cookies',    hex: '#d6d3d1', price: 2 },
+    { id: 'unicorn',    label: 'Unicorn',    hex: '#e9d5ff', price: 3 },
+    { id: 'galaxy',     label: 'Galaxy',     hex: '#4c1d95', price: 3 },
+    { id: 'lemon',      label: 'Lemon',      hex: '#fef08a', price: 2 },
+    { id: 'cherry',     label: 'Cherry',     hex: '#dc2626', price: 2 },
+    { id: 'coconut',    label: 'Coconut',    hex: '#fafaf9', price: 2 },
+    { id: 'caramel',    label: 'Caramel',    hex: '#d97706', price: 2 },
+    { id: 'matcha',     label: 'Matcha',     hex: '#84cc16', price: 3 },
+    { id: 'rainbow',    label: 'Rainbow',    hex: '#f97316', price: 3 }
 ];
 
 const TOPPINGS = [
@@ -26,7 +34,13 @@ const TOPPINGS = [
     { id: 'sauce',     label: 'Sauce',     emoji: '🍫', price: 1 },
     { id: 'flake',     label: 'Flake',     emoji: '🍪', price: 1 },
     { id: 'nuts',      label: 'Nuts',      emoji: '🥜', price: 1 },
-    { id: 'marshmallow', label: 'Marshmallow', emoji: '☁️', price: 1 }
+    { id: 'marshmallow', label: 'Marshmallow', emoji: '☁️', price: 1 },
+    { id: 'banana',    label: 'Banana',    emoji: '🍌', price: 1 },
+    { id: 'strawbits', label: 'Berries',   emoji: '🍓', price: 1 },
+    { id: 'honey',     label: 'Honey',     emoji: '🍯', price: 1 },
+    { id: 'candy',     label: 'Candy',     emoji: '🍬', price: 1 },
+    { id: 'popcorn',   label: 'Popcorn',   emoji: '🍿', price: 1 },
+    { id: 'star',      label: 'Star',      emoji: '⭐', price: 2 }
 ];
 
 /* Real customers, each with a face and a name, so the shop feels like a
@@ -38,7 +52,13 @@ const CUSTOMERS = [
     { face: '👴', name: 'Grandpa Joe' }, { face: '🧒', name: 'Sam' },
     { face: '👩‍🦰', name: 'Ruby' },    { face: '🧑‍🎤', name: 'Zee' },
     { face: '👮', name: 'Officer Dee' }, { face: '👩‍🚀', name: 'Captain Nova' },
-    { face: '🐉', name: 'Lydia' },    { face: '🧙', name: 'Wizard Bo' }
+    { face: '🐉', name: 'Lydia' },    { face: '🧙', name: 'Wizard Bo' },
+    { face: '🧜‍♀️', name: 'Coral' },   { face: '🦸‍♀️', name: 'Super Sky' },
+    { face: '👸', name: 'Princess Ivy' }, { face: '🤠', name: 'Cowboy Cal' },
+    { face: '👽', name: 'Zorp' },     { face: '🧑‍🍳', name: 'Chef Remy' },
+    { face: '🐻', name: 'Barnaby Bear' }, { face: '🦄', name: 'Sprinkle' },
+    { face: '🧑‍🚒', name: 'Kai' },     { face: '🐧', name: 'Pip' },
+    { face: '🧚', name: 'Fern' },     { face: '🤖', name: 'Bolt' }
 ];
 
 /* Some customers turn up together and have their own thing going on.

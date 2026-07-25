@@ -19,7 +19,26 @@ const TOPPINGS = [
     { id: 'chilli',    label: 'Chilli',    emoji: '🌶️', price: 1 },
     { id: 'basil',     label: 'Basil',     emoji: '🌿', price: 1 },
     { id: 'cheese',    label: 'Extra cheese', emoji: '🧀', price: 2 },
-    { id: 'bacon',     label: 'Bacon',     emoji: '🥓', price: 2 }
+    { id: 'bacon',     label: 'Bacon',     emoji: '🥓', price: 2 },
+    { id: 'prawn',     label: 'Prawns',    emoji: '🍤', price: 3 },
+    { id: 'chicken',   label: 'Chicken',   emoji: '🍗', price: 2 },
+    { id: 'tomato',    label: 'Tomato',    emoji: '🍅', price: 1 },
+    { id: 'onion',     label: 'Onion',     emoji: '🧅', price: 1 },
+    { id: 'broccoli',  label: 'Broccoli',  emoji: '🥦', price: 1 },
+    { id: 'egg',       label: 'Egg',       emoji: '🍳', price: 2 },
+    { id: 'avocado',   label: 'Avocado',   emoji: '🥑', price: 2 },
+    { id: 'garlic',    label: 'Garlic',    emoji: '🧄', price: 1 }
+];
+
+/* Whole pizzas people ask for by name. Ordering one of these instead of a
+   list of toppings makes the shop sound like a real pizza place. */
+const SPECIALS = [
+    { name: 'Margherita', toppings: ['tomato', 'basil'] },
+    { name: 'Hawaiian',   toppings: ['pineapple', 'chicken'] },
+    { name: 'Veggie',     toppings: ['pepper', 'mushroom', 'onion', 'broccoli'] },
+    { name: 'Meat Feast', toppings: ['pepperoni', 'bacon', 'chicken'] },
+    { name: 'Spicy One',  toppings: ['chilli', 'pepperoni', 'onion'] },
+    { name: 'Four Cheese',toppings: ['cheese', 'garlic'] }
 ];
 
 const CUSTOMERS = [
@@ -29,7 +48,12 @@ const CUSTOMERS = [
     { face: '🧒', name: 'Sam' },       { face: '👩‍🦰', name: 'Ruby' },
     { face: '🧑‍🚒', name: 'Firefighter Kai' }, { face: '👷', name: 'Bob' },
     { face: '🐉', name: 'Lydia' },     { face: '🧙', name: 'Wizard Bo' },
-    { face: '👽', name: 'Zorp' },      { face: '🦸', name: 'Captain Cheese' }
+    { face: '👽', name: 'Zorp' },      { face: '🦸', name: 'Captain Cheese' },
+    { face: '🧜‍♀️', name: 'Coral' },    { face: '👸', name: 'Princess Ivy' },
+    { face: '🤠', name: 'Cowboy Cal' }, { face: '🧑‍🍳', name: 'Chef Remy' },
+    { face: '🐻', name: 'Barnaby Bear' }, { face: '🦄', name: 'Sprinkle' },
+    { face: '🥷', name: 'Shadow' },    { face: '🤖', name: 'Bolt' },
+    { face: '🧚', name: 'Fern' },      { face: '👮', name: 'Officer Dee' }
 ];
 
 const NOTES = [10, 20, 50];
@@ -179,15 +203,25 @@ function clearBuild() {
 function nextCustomer() {
     const who = pick(CUSTOMERS);
 
-    const wantToppings = [];
-    const count = 1 + Math.floor(Math.random() * 4);   // 1 to 4 toppings
-    while (wantToppings.length < count) {
-        const t = pick(TOPPINGS);
-        if (!wantToppings.some(x => x.id === t.id)) wantToppings.push(t);
+    // A third of customers order a pizza by name instead of listing
+    // toppings, which sounds much more like a real pizza shop.
+    const special = Math.random() < 0.34 ? pick(SPECIALS) : null;
+
+    let wantToppings = [];
+
+    if (special) {
+        wantToppings = special.toppings.map(id => TOPPINGS.find(t => t.id === id));
+    } else {
+        const count = 1 + Math.floor(Math.random() * 4);   // 1 to 4 toppings
+        while (wantToppings.length < count) {
+            const t = pick(TOPPINGS);
+            if (!wantToppings.some(x => x.id === t.id)) wantToppings.push(t);
+        }
     }
 
     order = {
         who,
+        special,
         size: pick(SIZES),
         toppings: wantToppings,
         payWith: Math.random() < 0.6 ? pick(['tap', 'insert', 'swipe']) : 'cash'
@@ -206,9 +240,13 @@ function nextCustomer() {
         ? names[0]
         : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
 
-    orderText.textContent =
-        `${pick(['Hi!', 'Hello!', 'Evening!', 'Hiya!'])} ` +
-        `A ${order.size.label.toLowerCase()} pizza with ${list}, please!`;
+    const hello = pick(['Hi!', 'Hello!', 'Evening!', 'Hiya!']);
+
+    // A named pizza still lists what goes on it, so it stays fair.
+    orderText.textContent = order.special
+        ? `${hello} A ${order.size.label.toLowerCase()} ${order.special.name} please! ` +
+          `(that's ${list})`
+        : `${hello} A ${order.size.label.toLowerCase()} pizza with ${list}, please!`;
 
     clearBuild();
 }
