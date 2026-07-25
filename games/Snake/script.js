@@ -16,9 +16,9 @@ const START_LENGTH = 3;    // how many squares long the snake begins
 // Want a fourth speed? Add a line here, then add a matching button in
 // index.html with the same word in its data-speed. Nothing else to change.
 const SPEEDS = {
-    chill:  { start: 300, fastest: 240 },
-    normal: { start: 220, fastest: 155 },
-    speedy: { start: 140, fastest:  85 }
+    chill:  { start: 430, fastest: 380 },   // very slow, and barely speeds up
+    medium: { start: 300, fastest: 235 },
+    speedy: { start: 185, fastest: 115 }
 };
 
 // The food changes every single time, so the board never looks the same
@@ -69,8 +69,10 @@ let timerId = null;
 
 // Which of the three speeds is picked. Saved, so the game remembers your
 // choice next time you visit.
-let chosenSpeed = localStorage.getItem('snakeSpeed') || 'normal';
-if (!SPEEDS[chosenSpeed]) chosenSpeed = 'normal';   // in case of an old saved value
+// Chill is the starting choice, so someone playing for the very first time
+// gets the gentle version instead of having to know to pick it.
+let chosenSpeed = localStorage.getItem('snakeSpeed') || 'chill';
+if (!SPEEDS[chosenSpeed]) chosenSpeed = 'chill';   // in case of an old saved value
 
 // localStorage remembers things even after the browser closes, which is
 // how the best score survives until tomorrow.
