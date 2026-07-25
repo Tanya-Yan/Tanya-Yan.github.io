@@ -41,7 +41,35 @@ const CUSTOMERS = [
     { face: '🐉', name: 'Lydia' },    { face: '🧙', name: 'Wizard Bo' }
 ];
 
-const NOTES = [5, 10, 20];   // the notes customers pay with
+/* Some customers turn up together and have their own thing going on.
+   Lydia and Wizard Bo are getting married today, so they come in as a
+   pair with wedding lines instead of the usual greeting. */
+const PAIRS = [
+    {
+        face: '🐉🧙',
+        name: 'Lydia & Wizard Bo',
+        chance: 0.18,
+        openers: [
+            'WE\'RE GETTING MARRIED TODAY! In PARIS! 💍🗼',
+            'Bonjour! It\'s our wedding day in Paris! 💒🇫🇷',
+            'Ice cream for the happy couple! We fly to Paris tonight! ✈️🗼',
+            'Straight from the ceremony under the Eiffel Tower! 🗼💐'
+        ],
+        endings: [
+            ' ...for the wedding in Paris! 🗼',
+            ' ...and put it on the cake table! 🎂',
+            ' ...we\'re celebrating! 🎉'
+        ]
+    }
+];
+
+const NOTES = [5, 10, 20, 50];   // the notes customers pay with
+
+const MAX_SCOOPS = 10;   // the tallest tower the shop will build
+
+// Roughly one order in five is a giant one, so a ten scooper is a treat
+// rather than the normal thing.
+const BIG_ORDER_CHANCE = 0.2;
 
 
 /* ---------- Pieces of the page ---------- */
@@ -133,8 +161,8 @@ function addScoop(f) {
         buildLabel.textContent = 'Pick a cone first! 👇';
         return;
     }
-    if (built.scoops.length >= 4) {
-        buildLabel.textContent = 'That is as many scoops as will fit!';
+    if (built.scoops.length >= MAX_SCOOPS) {
+        buildLabel.textContent = `${MAX_SCOOPS} scoops is the tallest that will balance!`;
         return;
     }
 
@@ -145,7 +173,12 @@ function addScoop(f) {
     s.style.background = f.hex;
     scoopsEl.appendChild(s);
 
-    buildLabel.textContent = `${built.scoops.length} scoop${built.scoops.length > 1 ? 's' : ''}`;
+    fitScoops();
+
+    const n = built.scoops.length;
+    buildLabel.textContent = n >= 8 ? `${n} scoops! That is a TOWER 🗼`
+                           : n >= 5 ? `${n} scoops! Careful... 😅`
+                           : `${n} scoop${n > 1 ? 's' : ''}`;
 }
 
 function addTopping(t) {
@@ -167,10 +200,22 @@ function addTopping(t) {
     buildLabel.textContent = `${t.label} added!`;
 }
 
+/* A tall tower would shoot off the top of the screen, so the whole stack
+   shrinks as it grows. Five scoops stay full size, and by ten they are
+   half size, which keeps even the biggest tower inside its box.
+   transform-origin sits at the bottom so it shrinks towards the cone
+   rather than towards the middle. */
+function fitScoops() {
+    const n = built.scoops.length;
+    const scale = n <= 4 ? 1 : Math.max(0.46, 4.6 / n);
+    scoopsEl.style.transform = `scale(${scale})`;
+}
+
 function clearBuild() {
     built = { cone: null, scoops: [], toppings: [] };
     coneEl.className = '';
     scoopsEl.innerHTML = '';
+    scoopsEl.style.transform = 'scale(1)';
     toppingsEl.innerHTML = '';
     buildLabel.textContent = 'Tap a cone to start';
 }
@@ -179,10 +224,17 @@ function clearBuild() {
 /* ---------- A new customer ---------- */
 
 function nextCustomer() {
-    const who = pick(CUSTOMERS);
+    // Now and then a pair comes in instead of a single customer.
+    const pair = PAIRS.find(p => Math.random() < p.chance) || null;
+    const who  = pair || pick(CUSTOMERS);
 
-    // Between one and three scoops, and up to two toppings.
-    const scoopCount = 1 + Math.floor(Math.random() * 3);
+    // Usually one to three scoops, but now and then somebody wants a tower
+    // of up to ten.
+    const big = Math.random() < BIG_ORDER_CHANCE;
+    const scoopCount = big
+        ? 4 + Math.floor(Math.random() * (MAX_SCOOPS - 3))   // 4 up to 10
+        : 1 + Math.floor(Math.random() * 3);                 // 1, 2 or 3
+
     const wantScoops = [];
     for (let i = 0; i < scoopCount; i++) wantScoops.push(pick(FLAVOURS));
 
@@ -195,6 +247,7 @@ function nextCustomer() {
 
     order = {
         who,
+        pair,
         cone: pick(CONES),
         scoops: wantScoops,
         toppings: wantToppings,
@@ -231,7 +284,16 @@ function orderSentence(o) {
                    names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1];
     }
 
-    let s = `${pick(['Hi!', 'Hello!', 'Hiya!', 'Afternoon!'])} Can I get ` +
+    // A pair has its own lines. Otherwise a giant order gets an excited
+    // opener, and everything else gets a normal hello.
+    const opener = o.pair
+        ? pick(o.pair.openers)
+        : names.length >= 6
+            ? pick(['I\'m SO hungry!', 'It\'s for a party!', 'Go BIG today!',
+                    'You won\'t believe this order...'])
+            : pick(['Hi!', 'Hello!', 'Hiya!', 'Afternoon!']);
+
+    let s = `${opener} Can I get ` +
             `${scoopBit} in a ${o.cone.label.toLowerCase()} ${o.cone.id === 'cup' ? '' : 'cone'}`;
 
     if (o.toppings.length) {

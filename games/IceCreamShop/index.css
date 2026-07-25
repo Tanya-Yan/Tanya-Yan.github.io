@@ -170,7 +170,8 @@ button.ghost {
 #build {
     position: relative;
     width: 120px;
-    height: 150px;
+    /* Tall enough for a ten scoop tower once it has shrunk to fit. */
+    height: 210px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -181,7 +182,13 @@ button.ghost {
     display: flex;
     flex-direction: column-reverse;   /* newest scoop goes on top */
     align-items: center;
-    gap: -6px;
+
+    /* script.js shrinks this whole stack when the tower gets tall. The
+       origin sits at the bottom middle so it shrinks down towards the
+       cone instead of towards its own middle, which would leave the
+       bottom scoop floating in mid air. */
+    transform-origin: bottom center;
+    transition: transform 0.2s ease;
 }
 
 /* Each scoop is a circle that overlaps the one below, so the stack looks
