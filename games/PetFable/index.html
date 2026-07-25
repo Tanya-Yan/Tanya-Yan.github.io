@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pet Fable</title>
-    <!-- The ?v=7 number on the end is a trick to beat the browser's memory. The
+    <!-- The ?v=14 number on the end is a trick to beat the browser's memory. The
          browser saves files to load pages faster, and it decides they are
          the same file by their name. Change the name even slightly and it
          fetches a fresh copy. Bump this number after big changes. -->
-    <link rel="stylesheet" href="index.css?v=7">
+    <link rel="stylesheet" href="index.css?v=14">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -286,13 +286,99 @@
                 <button class="action-btn" id="sleep-btn">😴<span>Sleep</span></button>
             </div>
 
+            <button id="phone-btn" class="phone-open">📱 Phone Lydia</button>
+
             <button id="reset-btn" class="link-btn">Start a new egg</button>
+        </div>
+
+        <!-- ============ THE PHONE ============ -->
+        <!-- Sits on top of everything. Hidden until the phone button is
+             pressed. Inside it, only one .pview is shown at a time, which
+             is the same show-one-of-many trick used for the rooms. -->
+        <div id="phone" class="hidden">
+            <div class="phone-body">
+                <span class="phone-notch"></span>
+
+                <!-- Charms hanging off the bottom of the purple case. The
+                     ragdoll cat is drawn in CSS: cream body, grey ears and
+                     tail, blue eyes, which is what makes it a ragdoll. -->
+                <div class="charms">
+                    <span class="charm-string cs1"></span>
+                    <span class="charm-string cs2"></span>
+                    <span class="charm-string cs3"></span>
+
+                    <div class="charm charm-cat">
+                        <span class="cat-ear cat-ear-l"></span>
+                        <span class="cat-ear cat-ear-r"></span>
+                        <span class="cat-face">
+                            <span class="cat-eye cat-eye-l"></span>
+                            <span class="cat-eye cat-eye-r"></span>
+                            <span class="cat-nose"></span>
+                        </span>
+                        <span class="cat-tail"></span>
+                    </div>
+
+                    <div class="charm charm-tag">I ♥ MY CAT</div>
+                    <div class="charm charm-heart">💜</div>
+                </div>
+
+                <div class="phone-screen">
+
+                    <!-- Contacts -->
+                    <div class="pview pview-home active">
+                        <div class="phone-avatar" id="phone-avatar"></div>
+                        <div class="contact-name" id="contact-name">Lydia</div>
+                        <div class="contact-sub" id="contact-sub">Dragon 💜</div>
+                        <div class="pv-actions">
+                            <button class="pv-btn" data-view="call">📞<span>Call</span></button>
+                            <button class="pv-btn" data-view="text">💬<span>Text</span></button>
+                            <button class="pv-btn" data-view="face">📹<span>FaceTime</span></button>
+                        </div>
+                    </div>
+
+                    <!-- Voice call -->
+                    <div class="pview pview-call">
+                        <div class="call-avatar" id="call-avatar"></div>
+                        <div class="call-name" id="call-name">Lydia</div>
+                        <div class="call-status" id="call-status">Calling...</div>
+                        <div class="call-bubble" id="call-bubble"></div>
+                        <button class="hang-up" id="hang-up">📞 End</button>
+                    </div>
+
+                    <!-- Texting -->
+                    <div class="pview pview-text">
+                        <div class="text-header" id="text-header">Lydia 💜</div>
+                        <div class="messages" id="messages"></div>
+                        <div class="text-input-row">
+                            <input id="text-input" type="text" maxlength="60"
+                                   placeholder="Type a message..." autocomplete="off">
+                            <button id="send-btn">➤</button>
+                        </div>
+                    </div>
+
+                    <!-- FaceTime -->
+                    <div class="pview pview-face">
+                        <div class="face-video">
+                            <div class="face-dragon" id="face-dragon"></div>
+                            <span class="face-live">● LIVE</span>
+                            <span class="face-where" id="face-where"></span>
+                        </div>
+                        <div class="face-bubble" id="face-bubble"></div>
+                        <button class="hang-up" id="face-hang">📹 End</button>
+                    </div>
+
+                </div>
+
+                <button class="phone-home-btn" id="phone-back" title="Back">⌂</button>
+            </div>
+
+            <button id="phone-close" class="link-btn">Put phone away</button>
         </div>
 
         <a class="back-link" href="../../">← Back to the arcade</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=14"></script>
 </body>
 </html>

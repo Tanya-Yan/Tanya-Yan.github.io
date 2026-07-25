@@ -664,6 +664,556 @@ function catchUp() {
 }
 
 
+/* ============================================================
+   THE PHONE
+   Call Lydia, text her, or FaceTime her.
+   ============================================================ */
+
+const phone       = document.getElementById('phone');
+const phoneBtn    = document.getElementById('phone-btn');
+const phoneClose  = document.getElementById('phone-close');
+const phoneBack   = document.getElementById('phone-back');
+const pviews      = document.querySelectorAll('.pview');
+const pvBtns      = document.querySelectorAll('.pv-btn');
+
+const phoneAvatar = document.getElementById('phone-avatar');
+const contactName = document.getElementById('contact-name');
+const callAvatar  = document.getElementById('call-avatar');
+const callName    = document.getElementById('call-name');
+const callStatus  = document.getElementById('call-status');
+const callBubble  = document.getElementById('call-bubble');
+const textHeader  = document.getElementById('text-header');
+const messagesEl  = document.getElementById('messages');
+const textInput   = document.getElementById('text-input');
+const sendBtn     = document.getElementById('send-btn');
+const faceDragon  = document.getElementById('face-dragon');
+const faceBubble  = document.getElementById('face-bubble');
+const faceWhere   = document.getElementById('face-where');
+
+let callTimer = null;
+
+/* What Lydia says depends on how she is feeling, so phoning her is a real
+   way to find out what she needs. Each mood has its own set of lines. */
+const PHONE_LINES = {
+    hungry: ['My tummy is rumbling! 🍖', 'Is it dinner time yet? 🥺',
+             'I could eat a whole pizza! 🍕'],
+    sad:    ['I miss you... 🥺', 'Can you come and play with me? 💔',
+             'It\'s a bit boring here. 😢'],
+    sleepy: ['*yawn* I\'m so sleepy... 💤', 'Zzzzz... 😴',
+             'Can I have a nap? 🛏️'],
+    happy:  ['Hi! I\'m having the BEST day! 💜', 'I love you! 💖',
+             'Everything is great here! ✨', 'Guess what? I\'m happy! 😄']
+};
+
+// Where she is gets mentioned too, so the phone tells you something the
+// screen already shows and makes her feel like she has a life.
+const WHERE_LINES = {
+    house:   'I\'m at home. 🏠',
+    bedroom: 'I\'m in my bedroom. 🛏️',
+    pool:    'I\'m at the pool! 🏊',
+    park:    'I\'m at the WATER PARK! 🎢',
+    tramp:   'I\'m at the trampoline park! 🤸',
+    fair:    'I\'m at the fun fair! 🎡',
+    show:    'I\'m on the stage! 🎤'
+};
+
+function pickLine() {
+    const lines = PHONE_LINES[mood()] || PHONE_LINES.happy;
+    return lines[Math.floor(Math.random() * lines.length)];
+}
+
+function pick(list) {
+    return list[Math.floor(Math.random() * list.length)];
+}
+
+/* ---------- What Lydia texts back ----------
+
+   She reads your message looking for words she knows. The list is checked
+   from the top down and the first match wins, so put the most specific
+   words near the top. If nothing matches, she falls back to how she is
+   feeling right now.
+
+   This is not real understanding. She is matching words, the way a very
+   simple chatbot does. But it is enough to feel like a conversation.      */
+
+const TEXT_REPLIES = [
+    /* Grown-up topics get a friendly change of subject. Anyone can visit
+       this website, including little kids, so Lydia stays a baby dragon
+       who wants to talk about snacks. This rule is first on purpose, so it
+       is checked before anything else. */
+    { words: ['boyfriend', 'girlfriend', 'sex', 'kiss', 'kissing', 'dating', 'marry',
+              'married', 'crush', 'stupid', 'hate you', 'shut up'],
+      say: () => [pick(['I\'m just a baby dragon, I don\'t know about that! 🐉',
+                        'Let\'s talk about something else! 😄',
+                        'Huh? Can we talk about snacks instead? 🍕']),
+                  pick(['Wanna go to the water park? 🎢', 'Do you want to play? 🎾'])] },
+
+    { words: ['visit me', 'come over', 'come home', 'come see me', 'come back', 'visit'],
+      say: () => [pick(['I\'ll be right there! 🏃💨', 'On my way! Wait for me! 💜',
+                        'YES! I\'m coming to visit! 🐉✨']),
+                  pick(['Save me a snack! 🍕', 'Don\'t start playing without me! 🎾'])] },
+
+    { words: ['friend', 'bff', 'best friend'],
+      say: () => [pick(['You\'re my BEST friend! 💜', 'Best friends forever! 🤝✨'])] },
+
+    { words: ['how are you', 'how r u', 'how do you feel', 'you ok', 'you okay', 'hows it going'],
+      say: () => [pickLine(), WHERE_LINES[pet.room]] },
+
+    { words: ['where are you', 'where r u', 'where'],
+      say: () => [WHERE_LINES[pet.room], pick(['Come and find me! 🔍', 'Wish you were here! 💜'])] },
+
+    { words: ['love you', 'love u', 'ily', '❤', '💜', '💖'],
+      say: () => [pick(['I love you more! 💜💜💜', 'Awww, I love you too! 🥰',
+                        'You\'re my favourite person ever! 💖'])] },
+
+    { words: ['miss you', 'miss u'],
+      say: () => [pick(['I miss you too! 🥺', 'Come home soon! 🏠💜'])] },
+
+    { words: ['hungry', 'food', 'eat', 'dinner', 'lunch', 'snack', 'pizza', 'hot dog'],
+      say: () => pet.hunger < 45
+          ? [pick(['YES please, I\'m starving! 🍕', 'Feed me feed me feed me! 🍖'])]
+          : [pick(['I\'m pretty full right now. 😋', 'Maybe later, I just ate! 🍽️'])] },
+
+    { words: ['sleep', 'tired', 'nap', 'bed', 'goodnight', 'good night', 'night night'],
+      say: () => pet.energy < 45
+          ? [pick(['I AM sleepy... 😴', 'Can we go to my bedroom? 🛏️'])]
+          : [pick(['I\'m not tired yet! 😃', 'No way, I want to play! ⚡'])] },
+
+    { words: ['play', 'bored', 'fun', 'game'],
+      say: () => [pick(['YES! Let\'s play! 🎾', 'Can we go to the water park?? 🎢',
+                        'I love playing with you! 💖'])] },
+
+    { words: ['swim', 'pool', 'water', 'surf'],
+      say: () => [pick(['The pool! Let\'s goooo! 🏊', 'I\'m a really good swimmer. 💦',
+                        'Can I have ice cream after? 🍦'])] },
+
+    { words: ['cat', 'kitty', 'ragdoll'],
+      say: () => [pick(['I saw your cat keychain! So cute! 🐱',
+                        'Ragdoll cats are the fluffiest. 🐈',
+                        'Can I meet your cat? 🥺'])] },
+
+    { words: ['joke', 'funny', 'laugh'],
+      say: () => [pick(['Why did the dragon cross the road? To get to the OTHER FIRE! 🔥😂',
+                        'What do you call a dragon who sleeps all day? A DRAGGIN\'! 😴😂',
+                        'Knock knock! ... Who\'s there? ... Lydia! 🐉'])] },
+
+    { words: ['cute', 'pretty', 'beautiful', 'best', 'amazing', 'awesome', 'cool'],
+      say: () => [pick(['You think so? 🥰', 'Stop it, I\'m blushing! 😊💜',
+                        'You\'re the cute one! 💖'])] },
+
+    { words: ['sorry'],
+      say: () => [pick(['It\'s okay! I forgive you. 💜', 'Don\'t worry about it! 😊'])] },
+
+    { words: ['thank', 'thx', 'ty'],
+      say: () => [pick(['You\'re welcome! 💜', 'Anytime! 😊'])] },
+
+    { words: ['bye', 'goodbye', 'see you', 'gtg', 'later'],
+      say: () => [pick(['Byeee! Come back soon! 👋', 'Don\'t be gone too long! 🥺💜'])] },
+
+    { words: ['your name', 'whats your name', 'who are you'],
+      say: () => [`I'm ${pet.name}! 🐉`, 'You picked my name, remember? 💜'] },
+
+    { words: ['my name', 'who am i'],
+      say: () => [pick(['You\'re my favourite human! 💜', 'You\'re my person! 🥰'])] },
+
+    { words: ['hi', 'hey', 'hello', 'yo', 'sup'],
+      say: () => [pick([`Hi!! 💜`, 'Heyyy! 😄', 'You texted me! 🥰']),
+                  WHERE_LINES[pet.room]] },
+
+    { words: ['yes', 'yeah', 'yep', 'ok', 'okay', 'sure'],
+      say: () => [pick(['Yayyy! 🎉', 'Cool! 😄', 'I knew you\'d say that! 💜'])] },
+
+    { words: ['no', 'nope', 'nah'],
+      say: () => [pick(['Awww. 🥺', 'Okay... maybe later? 💜'])] }
+];
+
+/* ---------- Questions Lydia asks you ----------
+
+   This is what turns replying into a conversation. She asks something,
+   remembers that she asked, and treats your next message as the answer.
+   Then she keeps the answer forever and brings it up later.              */
+
+const QUESTIONS = [
+    { key: 'food',   ask: 'What\'s your favourite food? 🍕',
+      reply: v => [`${v}?! That's my favourite too! 🤤`, 'We have such good taste. 😌'] },
+
+    { key: 'colour', ask: 'Ooh, what\'s your favourite colour? 🎨',
+      reply: v => [`${v} is SO pretty! 💜`, 'I\'m going to paint my bedroom that colour.'] },
+
+    { key: 'yourname', ask: 'Wait... what should I call YOU? 🐉',
+      reply: v => [`${v}! That's a brilliant name. 💜`, `Hi ${v}!! 🥰`] },
+
+    { key: 'game',   ask: 'What\'s your favourite game? 🎮',
+      reply: v => [`${v}? I want to play that! 🎮`, 'Will you teach me how? 🥺'] },
+
+    { key: 'place',  ask: 'Where should we go next? 🎢',
+      reply: v => [`${v}! Yes yes YES! 🙌`, 'Let\'s go right now! 🏃💨'] },
+
+    { key: 'school', ask: 'What did you do today? 😊',
+      reply: v => [`${v}? Tell me more! 👀`, 'I just napped and ate snacks. 😴'] }
+];
+
+// Things she says using something you told her earlier.
+function factLine() {
+    const f = pet.facts || {};
+
+    const options = [];
+    if (f.food)     options.push(`I keep thinking about ${f.food}. 🤤`);
+    if (f.colour)   options.push(`Guess what? I saw something ${f.colour} today! 🎨`);
+    if (f.yourname) options.push(`I like saying your name. ${f.yourname}! 💜`);
+    if (f.game)     options.push(pick([`Is ${f.game} still your favourite? 🎮`,
+                                       `I tried playing ${f.game}. I was TERRIBLE. 😂`,
+                                       `Teach me ${f.game} one day? 🥺`]));
+    if (f.place)    options.push(`Can we go to ${f.place} again? 🥺`);
+
+    return options.length ? pick(options) : null;
+}
+
+/* Keeps her from saying the same thing twice in a row. Without this she
+   repeats herself constantly and the illusion falls apart. */
+let recentLines = [];
+
+function freshPick(list) {
+    const unused = list.filter(l => !recentLines.includes(l));
+    const chosen = pick(unused.length ? unused : list);
+
+    recentLines.push(chosen);
+    if (recentLines.length > 8) recentLines.shift();
+
+    return chosen;
+}
+
+// Tidies your message up before looking at it, so "HI!!!" and "hi" match.
+function tidy(text) {
+    return ' ' + text.toLowerCase().replace(/[^a-z0-9' ]/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
+}
+
+function replyTo(text) {
+    const lower = tidy(text);
+    const raw   = text.trim();
+
+    /* 1. Is this the answer to something she just asked?
+          Checked first, because if she asked "what's your favourite food"
+          and you say "pizza", she should hear an answer, not a food topic. */
+    if (pet.asked) {
+        const q = QUESTIONS.find(x => x.key === pet.asked);
+        pet.asked = null;
+
+        // "I don't know" is not an answer worth remembering.
+        const dodged = /^(i dunno|dunno|idk|i don't know|i dont know|nothing|no)$/i.test(raw);
+
+        if (q && !dodged && raw.length <= 40) {
+            if (!pet.facts) pet.facts = {};
+            pet.facts[q.key] = raw;
+            save();
+            return q.reply(raw);
+        }
+        if (q && dodged) return ['That\'s okay! 💜', 'Ask me something instead. 😄'];
+    }
+
+    /* 2. Does it match one of her topics? */
+    let lines = null;
+
+    for (const rule of TEXT_REPLIES) {
+        if (rule.words.some(w => lower.includes(' ' + w) || lower.includes(w + ' '))) {
+            lines = rule.say();
+            break;
+        }
+    }
+
+    /* 3. A question she has no answer for. */
+    if (!lines && raw.includes('?')) {
+        lines = [freshPick([
+            'Hmm, I don\'t know! I\'m only a baby dragon. 🐉',
+            'Good question! Ask me an easier one. 😅',
+            'I have NO idea. 🤷',
+            'Let me think... nope, nothing. 😂'
+        ])];
+    }
+
+    /* 4. Nothing matched. She reacts to what you actually typed rather than
+          ignoring it, which is what stops her feeling like a robot. */
+    if (!lines) {
+        const short = raw.length <= 24 ? raw : raw.slice(0, 22) + '...';
+        lines = [freshPick([
+            `"${short}"? Tell me more! 👀`,
+            `Ooh, ${short}! 😄`,
+            'Really?? 😲',
+            'That\'s so interesting! 💜',
+            'No wayyy! 😂',
+            `I've been thinking about that too. 🤔`
+        ])];
+    }
+
+    /* 5. Sometimes she says something using a thing you told her before. */
+    if (pet.facts && Math.random() < 0.25) {
+        const f = factLine();
+        if (f) lines = lines.concat(f);
+    }
+
+    /* 6. And roughly half the time she asks you something back, which is the
+          bit that keeps a conversation going instead of ending it. */
+    if (Math.random() < 0.5) {
+        const unasked = QUESTIONS.filter(q => !(pet.facts && pet.facts[q.key]));
+        const pool = unasked.length ? unasked : QUESTIONS;
+        const q = pick(pool);
+
+        pet.asked = q.key;
+        lines = lines.concat(q.ask);
+        save();
+    }
+
+    return lines;
+}
+
+function showView(name) {
+    pviews.forEach(v => v.classList.toggle('active', v.classList.contains('pview-' + name)));
+}
+
+// Puts a small copy of Lydia into any box on the phone.
+function fillDragon(el, extraClass) {
+    el.innerHTML = dragonHTML();
+    const d = el.querySelector('.dragon');
+    d.className = 'dragon ' + mood() + (extraClass ? ' ' + extraClass : '');
+}
+
+phoneBtn.addEventListener('click', () => {
+    phone.classList.remove('hidden');
+    contactName.textContent = pet.name;
+    textHeader.textContent  = pet.name + ' 💜';
+    fillDragon(phoneAvatar);
+    showView('home');
+});
+
+phoneClose.addEventListener('click', closePhone);
+phoneBack.addEventListener('click', () => {
+    clearTimeout(callTimer);
+    showView('home');
+});
+
+function closePhone() {
+    clearTimeout(callTimer);
+    phone.classList.add('hidden');
+}
+
+pvBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+
+        if (view === 'call')  startCall();
+        if (view === 'text')  openTexts();
+        if (view === 'face')  startFaceTime();
+    });
+});
+
+
+/* ---------- Voice call ---------- */
+
+function startCall() {
+    showView('call');
+    callName.textContent = pet.name;
+    fillDragon(callAvatar, 'calling');
+
+    callStatus.textContent = 'Calling...';
+    callBubble.textContent = '';
+    callBubble.classList.remove('show');
+
+    // A short wait before she picks up, because an instant answer feels
+    // fake. Real phones ring for a moment.
+    clearTimeout(callTimer);
+    callTimer = setTimeout(() => {
+        if (pet.asleep) {
+            callStatus.textContent = 'No answer 😴';
+            callBubble.textContent = 'She\'s fast asleep. Try again when she wakes up!';
+            callBubble.classList.add('show');
+            return;
+        }
+
+        callStatus.textContent = 'Connected 🟢';
+        callBubble.textContent = WHERE_LINES[pet.room] + ' ' + pickLine();
+        callBubble.classList.add('show');
+
+        // Hearing from you cheers her up a little.
+        pet.happy = clamp(pet.happy + 6);
+        save();
+        render();
+    }, 1600);
+}
+
+document.getElementById('hang-up').addEventListener('click', () => {
+    clearTimeout(callTimer);
+    showView('home');
+});
+
+
+/* ---------- Texting ---------- */
+
+function openTexts() {
+    showView('text');
+    drawMessages();
+    textInput.focus();
+}
+
+function drawMessages() {
+    const list = pet.texts || [];
+    messagesEl.innerHTML = '';
+
+    if (list.length === 0) {
+        messagesEl.innerHTML =
+            '<div class="msg-empty">Say hi to ' + pet.name + '! 💬<br><br>' +
+            'She asks questions back, and she remembers what you tell her.</div>';
+        return;
+    }
+
+    for (const m of list) {
+        const div = document.createElement('div');
+        div.className = 'msg msg-' + m.from;
+        div.textContent = m.text;
+        messagesEl.appendChild(div);
+    }
+
+    // Always show the newest message rather than the top of the list.
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function addMessage(from, text) {
+    if (!pet.texts) pet.texts = [];
+    pet.texts.push({ from, text });
+
+    // Only the last 30 are kept, so a long chat cannot grow forever.
+    if (pet.texts.length > 30) pet.texts = pet.texts.slice(-30);
+
+    save();
+    drawMessages();
+}
+
+// Shows the three bouncing dots while she is "typing".
+function showTyping(on) {
+    let dots = document.getElementById('typing');
+
+    if (on) {
+        if (dots) return;
+        dots = document.createElement('div');
+        dots.id = 'typing';
+        dots.className = 'msg msg-her typing';
+        dots.innerHTML = '<span></span><span></span><span></span>';
+        messagesEl.appendChild(dots);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    } else if (dots) {
+        dots.remove();
+    }
+}
+
+function sendText() {
+    const typed = textInput.value.trim();
+    if (typed === '') return;
+
+    addMessage('me', typed);
+    textInput.value = '';
+
+    if (pet.asleep) {
+        setTimeout(() => addMessage('her', 'zzz... 💤'), 900);
+        return;
+    }
+
+    // She works out what to say, then sends it one message at a time with a
+    // pause between, the way a real person texts.
+    const replies = replyTo(typed);
+
+    showTyping(true);
+
+    replies.forEach((line, i) => {
+        setTimeout(() => {
+            showTyping(false);
+            addMessage('her', line);
+
+            // Still more to come, so the dots come back.
+            if (i < replies.length - 1) showTyping(true);
+        }, 850 + i * 1100);
+    });
+
+    pet.happy = clamp(pet.happy + 4);
+    save();
+    render();
+}
+
+sendBtn.addEventListener('click', sendText);
+textInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') sendText();
+});
+
+
+/* ---------- FaceTime ---------- */
+
+function startFaceTime() {
+    showView('face');
+    fillDragon(faceDragon);
+
+    faceWhere.textContent = WHERE_LINES[pet.room];
+
+    faceBubble.textContent = pet.asleep
+        ? 'She\'s asleep! Look how cute. 💤'
+        : pickLine();
+
+    if (!pet.asleep) {
+        pet.happy = clamp(pet.happy + 8);   // seeing your face is the best
+        save();
+        render();
+    }
+}
+
+document.getElementById('face-hang').addEventListener('click', () => showView('home'));
+
+
+/* ---------- Lydia's own phone ---------- */
+
+/* She has a phone too, so sometimes she rings you first. It only happens
+   when she needs something and only when the phone is closed, otherwise
+   she would interrupt you mid-call. */
+
+const incomingEl = document.createElement('div');
+incomingEl.id = 'incoming';
+incomingEl.className = 'hidden';
+incomingEl.innerHTML =
+    '<span class="ring-icon">📱</span>' +
+    '<span class="ring-text"><b id="ring-who">Lydia</b><br>is calling you...</span>' +
+    '<button id="ring-answer">Answer</button>' +
+    '<button id="ring-ignore" class="link-btn">Later</button>';
+document.getElementById('game-container').appendChild(incomingEl);
+
+const ringWho = incomingEl.querySelector('#ring-who');
+
+function maybeSheCalls() {
+    if (!pet || pet.asleep) return;
+    if (!phone.classList.contains('hidden')) return;   // already on the phone
+    if (!incomingEl.classList.contains('hidden')) return;
+
+    // She only rings when something is actually wrong, so a ringing phone
+    // always means she needs you.
+    const needsSomething = pet.hunger < 32 || pet.happy < 32 || pet.energy < 22;
+    if (!needsSomething) return;
+
+    ringWho.textContent = pet.name;
+    incomingEl.classList.remove('hidden');
+}
+
+incomingEl.querySelector('#ring-answer').addEventListener('click', () => {
+    incomingEl.classList.add('hidden');
+    phone.classList.remove('hidden');
+    contactName.textContent = pet.name;
+    textHeader.textContent  = pet.name + ' 💜';
+    fillDragon(phoneAvatar);
+    startCall();
+});
+
+incomingEl.querySelector('#ring-ignore').addEventListener('click', () => {
+    incomingEl.classList.add('hidden');
+});
+
+// She tries every 45 seconds, so she is never annoying about it.
+setInterval(maybeSheCalls, 45000);
+
+
 /* ---------- Go ---------- */
 
 const savedPet = load();
