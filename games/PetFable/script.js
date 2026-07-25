@@ -57,7 +57,10 @@ const ROOMS = {
     // The stage puts on shows, but Lydia can still eat and nap here.
     // Looking after her comes first, wherever she happens to be.
     show:    { label: 'Shows',      playHappy: 2.6, playEnergy: 1.4, sleepRate: 0.6,
-               arrive: 'The stage! Karaoke, magic or a bird show? 🎭' }
+               arrive: 'The stage! Karaoke, magic or a bird show? 🎭' },
+
+    wedding: { label: 'Wedding',    playHappy: 3.0, playEnergy: 0.9, sleepRate: 0.5,
+               arrive: 'The wedding! Everything looks so beautiful! 💒✨' }
 };
 
 /* Extra things Lydia can do, but only in certain places. Each one says what
@@ -116,6 +119,28 @@ const EXTRAS = {
         { icon: '🏊', label: 'Big Pool', happy: 18, energy: -8, hunger: -4,
           says: ['Splashing in the big pool! 🏊', 'Race you to the end! 💦',
                  'I can do a handstand underwater! 🤸'] }
+    ],
+
+    wedding: [
+        // `special` marks a button that does more than move the bars.
+        { icon: '💍', label: 'Say "I Do"', special: 'ido',
+          happy: 40, energy: 10, hunger: 0, says: [] },
+
+        { icon: '💐', label: 'Bouquet', happy: 20, energy: -4, hunger: -2,
+          says: ['I\'m throwing it! Catch! 💐', 'Who wants the flowers?! 🌸',
+                 'Careful, it\'s heavier than it looks! 😂'] },
+
+        { icon: '🎂', label: 'Cake', happy: 26, energy: 12, hunger: 30,
+          says: ['FIVE LAYERS! 🎂', 'I got icing on my nose. 😋',
+                 'Best cake I have ever eaten. 🤤'] },
+
+        { icon: '💃', label: 'First Dance', happy: 30, energy: -12, hunger: -5,
+          says: ['Dancing with you! 💃🐉', 'Don\'t step on my tail! 😂',
+                 'I never want this song to end. 🥹💜'] },
+
+        { icon: '📸', label: 'Photos', happy: 18, energy: -3, hunger: -2,
+          says: ['Say cheese! 📸', 'Everyone squeeze in! 🥰',
+                 'I\'m keeping this one forever. 🖼️💜'] }
     ]
 };
 
@@ -378,6 +403,7 @@ function render() {
     const PLAY_LABEL = {
         house: '🎾<span>Play</span>',
         bedroom: '🎾<span>Play</span>',
+        wedding: '💐<span>Celebrate</span>',
         pool: '🏊<span>Swim</span>',
         park: '🎢<span>Water Slide</span>',
         tramp: '🤸<span>Bounce</span>',
@@ -430,6 +456,7 @@ function goToRoom(name) {
     roomBtns.forEach(b => b.classList.toggle('here', b.dataset.room === name));
 
     buildExtras();
+    showMarried();
     save();
     render();
 }
@@ -455,6 +482,12 @@ function buildExtras() {
         btn.addEventListener('click', () => {
             if (pet.asleep) {
                 say('Shhh, I\'m sleeping... 💤');
+                return;
+            }
+
+            // The wedding ceremony. Only happens properly once.
+            if (thing.special === 'ido') {
+                sayIDo();
                 return;
             }
 
@@ -540,13 +573,15 @@ playBtn.addEventListener('click', () => {
         park:    ['WHOOOSH! Down the slide! 🎢', 'Again! Again! 💦'],
         tramp:   ['BOING! BOING! 🤸', 'I can touch the sky! ⭐', 'Backflip! 🌟'],
         fair:    ['POP! Got one! 🎈', 'Round and round! 🎡', 'Cotton candy! 🍭'],
+        wedding: ['Happiest day of my life! 💒', 'Everyone came! 🥹💐',
+                  'Leonard looks so handsome! 💚', 'I love this song! 🎶'],
         show:    ['Ta-daaa! 🎤', 'Everybody clap! 👏', 'For my next trick... 🎭']
     }[pet.room];
 
     // Each place throws up its own little emoji when she plays.
     const PARTICLE = {
         house: '💖', bedroom: '💖', pool: '💦',
-        park: '💦', tramp: '⭐', fair: '🎈', show: '🎵'
+        park: '💦', tramp: '⭐', fair: '🎈', show: '🎵', wedding: '💐'
     };
     floaty(PARTICLE[pet.room]);
 
@@ -737,16 +772,39 @@ function pick(list) {
    simple chatbot does. But it is enough to feel like a conversation.      */
 
 const TEXT_REPLIES = [
-    /* Grown-up topics get a friendly change of subject. Anyone can visit
-       this website, including little kids, so Lydia stays a baby dragon
-       who wants to talk about snacks. This rule is first on purpose, so it
-       is checked before anything else. */
-    { words: ['boyfriend', 'girlfriend', 'sex', 'kiss', 'kissing', 'dating', 'marry',
-              'married', 'crush', 'stupid', 'hate you', 'shut up'],
+    /* Only properly grown-up words get a change of subject. Anyone on the
+       internet can text Lydia, so this rule is checked first, before
+       everything else. Everything sweet is allowed. */
+    { words: ['sex', 'sexy', 'nude', 'naked', 'drugs', 'stupid', 'hate you', 'shut up'],
       say: () => [pick(['I\'m just a baby dragon, I don\'t know about that! 🐉',
-                        'Let\'s talk about something else! 😄',
-                        'Huh? Can we talk about snacks instead? 🍕']),
+                        'Let\'s talk about something nicer! 😄']),
                   pick(['Wanna go to the water park? 🎢', 'Do you want to play? 🎾'])] },
+
+    /* Getting married, dragon style. Cake, a party and best friends
+       forever, which is what it means when you are little. */
+    { words: ['marry', 'married', 'marriage', 'wedding', 'engaged'],
+      say: () => [pick(['MARRY YOU?! 🥹💜', 'A wedding?! YES! 💍✨',
+                        'Oh my goodness YES! 🥰']),
+                  pick(['We can have a HUGE cake! 🎂', 'Can the wedding be at the water park?? 🎢',
+                        'I\'ll wear a flower crown! 🌸']),
+                  pick(['Best friends forever and ever. 💜',
+                        'You and me, always. 🐉💖'])] },
+
+    { words: ['forever', 'always', 'never leave', 'stay with me'],
+      say: () => [pick(['Forever and EVER. 💜', 'Always always always. 🥰']),
+                  pick(['I\'m never going anywhere. 🐉💖', 'Pinky promise. 🤙'])] },
+
+    { words: ['family', 'sister', 'brother', 'adopt', 'my dragon', 'mine'],
+      say: () => [pick(['We\'re family! 👨‍👩‍👧 💜', 'You\'re my whole family. 🥺💖',
+                        'I\'m YOUR dragon and you\'re MY person. 🐉'])] },
+
+    { words: ['boyfriend', 'girlfriend', 'crush', 'dating'],
+      say: () => [pick(['I\'m only a baby dragon! 🐉', 'Nope, just you and me! 😄']),
+                  pick(['You\'re my favourite person anyway. 💜', 'Who needs one? I\'ve got you! 🥰'])] },
+
+    { words: ['kiss', 'hug', 'cuddle', 'snuggle'],
+      say: () => [pick(['*hugs you so tight* 🤗💜', 'Mwah! 😚', '*snuggles* 🥰']),
+                  pick(['I love hugs. 💖', 'Don\'t let go! 🐉'])] },
 
     { words: ['visit me', 'come over', 'come home', 'come see me', 'come back', 'visit'],
       say: () => [pick(['I\'ll be right there! 🏃💨', 'On my way! Wait for me! 💜',
@@ -762,9 +820,28 @@ const TEXT_REPLIES = [
     { words: ['where are you', 'where r u', 'where'],
       say: () => [WHERE_LINES[pet.room], pick(['Come and find me! 🔍', 'Wish you were here! 💜'])] },
 
-    { words: ['love you', 'love u', 'ily', '❤', '💜', '💖'],
-      say: () => [pick(['I love you more! 💜💜💜', 'Awww, I love you too! 🥰',
-                        'You\'re my favourite person ever! 💖'])] },
+    { words: ['love you', 'love u', 'ily', 'i love', '❤', '💜', '💖'],
+      say: () => [pick(['I love you MORE! 💜💜💜', 'Awww I love you too! 🥰',
+                        'You\'re my favourite person in the whole world! 💖',
+                        'I love you to the moon and back! 🌙💜']),
+                  pick(['You\'re the best thing that ever happened to me. 🥺',
+                        'I\'m so lucky you picked my egg. 🥚💜',
+                        'I think about you when you\'re away. 💭💖',
+                        'Nobody else has a person as good as mine. 🐉'])] },
+
+    /* Getting ready for the wedding. She has opinions about all of it. */
+    { words: ['wedding', 'prepare', 'preparing', 'plan', 'tomorrow', 'get ready',
+              'dress', 'cake', 'flowers', 'ring', 'invite', 'invitation'],
+      say: () => [pick(['THE WEDDING! I can\'t stop thinking about it! 💍✨',
+                        'Is it tomorrow already?! I\'m so excited! 🥹',
+                        'Okay okay, wedding planning time! 📝💜']),
+                  pick(['I want a purple flower crown. 🌸💜',
+                        'The cake has to be FIVE layers. 🎂',
+                        'Can we get married at the water park? 🎢💦',
+                        'I\'m inviting everyone from the fun fair! 🎡',
+                        'I already practised walking down the aisle. 🚶💐',
+                        'Do dragons throw the bouquet? I\'m throwing it. 💐']),
+                  pick(['Best day of my whole life. 💜', 'I\'m going to cry happy tears. 🥹'])] },
 
     { words: ['miss you', 'miss u'],
       say: () => [pick(['I miss you too! 🥺', 'Come home soon! 🏠💜'])] },
@@ -1163,6 +1240,75 @@ function startFaceTime() {
 }
 
 document.getElementById('face-hang').addEventListener('click', () => showView('home'));
+
+
+/* ---------- The ceremony ---------- */
+
+const GROOM_NAME = 'Leonard Hostetler';
+
+function sayIDo() {
+    // Already married, so this is a vow renewal rather than a first time.
+    if (pet.married) {
+        pet.happy = clamp(pet.happy + 20);
+        floaty('💍'); floaty('💜');
+        say(pick([`I still do! Love you forever, ${GROOM_NAME}. 💍💜`,
+                  'Best decision I ever made. 🥰',
+                  'I\'d marry you all over again! 💒']), 4500);
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        save();
+        render();
+        return;
+    }
+
+    pet.married = true;
+    pet.happy   = 100;
+    pet.energy  = clamp(pet.energy + 10);
+    save();
+
+    // The ceremony plays out one line at a time rather than all at once,
+    // because a wedding should not be over in half a second.
+    const vows = [
+        ['💍 Do you take ' + GROOM_NAME + '...', 2600],
+        ['I DO! 🥹💜', 2600],
+        ['*everyone is crying* 😭💐', 2600],
+        ['You may kiss the dragon! 😚🐉', 3000],
+        [`Mr and Mrs ${pet.name} & Leonard! 💒✨`, 4500]
+    ];
+
+    let when = 0;
+    for (const [line, hold] of vows) {
+        setTimeout(() => {
+            say(line, hold);
+            floaty(pick(['💐', '💍', '🌸', '💜', '✨']));
+        }, when);
+        when += hold - 400;
+    }
+
+    // Confetti in bursts, so it keeps going through the whole ceremony.
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => confetti({
+            particleCount: 130,
+            spread: 100,
+            origin: { y: 0.55 }
+        }), i * 2400);
+    }
+
+    showMarried();
+    render();
+}
+
+// Puts the JUST MARRIED banner up and stands Leonard next to her.
+function showMarried() {
+    const banner = document.getElementById('married-banner');
+    const groom  = document.getElementById('groom');
+
+    if (banner) banner.classList.toggle('hidden', !pet.married);
+    if (groom)  groom.classList.toggle('hidden', !pet.married);
+
+    // The white dress and earrings only appear once she is married.
+    const dragon = petDragonEl.querySelector('.dragon');
+    if (dragon) dragon.classList.toggle('bride', !!pet.married && pet.room === 'wedding');
+}
 
 
 /* ---------- Lydia's own phone ---------- */

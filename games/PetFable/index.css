@@ -1514,7 +1514,278 @@ button:active { transform: scale(0.95); }
 .n2 { top: 100px; right: 92px; animation-delay: 1s; }
 .n3 { top: 52px;  right: 104px; animation-delay: 1.9s; }
 
+/* ============================================================
+   THE WEDDING
+   ============================================================ */
+
+.room-wedding {
+    background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.16), transparent 65%);
+}
+
+/* Fairy lights: a row of glowing dots strung across the top, made with a
+   repeating gradient rather than 20 separate elements. */
+.fairy-lights {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    height: 10px;
+    background-image: radial-gradient(circle, #fde68a 0 3px, transparent 4px);
+    background-size: 26px 10px;
+    filter: drop-shadow(0 0 5px rgba(253, 230, 138, 0.9));
+    animation: twinkle 2.4s ease-in-out infinite;
+}
+
+/* The flower arch: a thick ring with the bottom half cut away, which
+   leaves an archway. */
+.arch {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    margin-left: -84px;
+    width: 168px;
+    height: 168px;
+    border: 13px solid #86efac;
+    border-radius: 50%;
+    clip-path: inset(0 0 42% 0);
+    box-shadow: 0 0 18px rgba(134, 239, 172, 0.5);
+}
+
+.arch-flower { position: absolute; font-size: 1.2rem; }
+.af1 { top: 44%; left: -22px; }
+.af2 { top: 12%; left: 2px; }
+.af3 { top: -20px; left: 50%; margin-left: -10px; font-size: 1.4rem; }
+.af4 { top: 12%; right: 2px; }
+.af5 { top: 44%; right: -22px; }
+
+/* The aisle. Narrow at the back and wide at the front, which is what
+   makes it look like it goes off into the distance. */
+.aisle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -78px;
+    width: 156px;
+    height: 88px;
+    background: linear-gradient(180deg, #fbcfe8, #f9a8d4);
+    clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+    opacity: 0.85;
+}
+
+.petal-strip {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.9) 0 2px, transparent 3px);
+    background-size: 18px 16px;
+}
+
+.guests { position: absolute; bottom: 26px; font-size: 1.1rem; opacity: 0.85; }
+.guests-l { left: 10px; }
+.guests-r { right: 10px; }
+
+/* --- the five layer cake --- */
+
+.wcake { position: absolute; bottom: 24px; right: 16px; width: 46px; height: 74px; }
+
+.tier {
+    position: absolute;
+    left: 50%;
+    background: #fff1f2;
+    border: 2px solid #fbcfe8;
+    border-radius: 3px;
+}
+/* Each tier is narrower than the one below, which is what stacks it. */
+.t1 { bottom: 0;    width: 46px; height: 16px; margin-left: -23px; }
+.t2 { bottom: 15px; width: 38px; height: 14px; margin-left: -19px; }
+.t3 { bottom: 28px; width: 30px; height: 13px; margin-left: -15px; }
+.t4 { bottom: 40px; width: 23px; height: 12px; margin-left: -11.5px; }
+.t5 { bottom: 51px; width: 16px; height: 11px; margin-left: -8px; }
+
+.cake-top {
+    position: absolute;
+    bottom: 61px;
+    left: 50%;
+    margin-left: -8px;
+    font-size: 0.9rem;
+}
+
+/* --- petals drifting down --- */
+
+.petal {
+    position: absolute;
+    font-size: 1.1rem;
+    animation: fallPetal 7s linear infinite;
+}
+.p1 { left: 14%; animation-delay: 0s; }
+.p2 { left: 38%; animation-delay: 1.8s; }
+.p3 { left: 64%; animation-delay: 3.4s; }
+.p4 { left: 86%; animation-delay: 5.1s; }
+
+@keyframes fallPetal {
+    0%   { top: -20px; opacity: 0; transform: rotate(0deg); }
+    12%  { opacity: 0.95; }
+    88%  { opacity: 0.95; }
+    100% { top: 240px; opacity: 0; transform: rotate(340deg); }
+}
+
+/* --- Leonard Hostetler, the groom --- */
+
+#groom {
+    position: absolute;
+    bottom: 46px;
+    left: 50%;
+    margin-left: 24px;
+    width: 62px;
+    height: 74px;
+    z-index: 3;
+    animation: bob 3.1s ease-in-out infinite 0.4s;
+}
+
+#groom span { position: absolute; }
+
+.groom-body {
+    width: 44px;
+    height: 36px;
+    background: #6ee7b7;
+    border-radius: 50%;
+    bottom: 8px;
+    left: 9px;
+}
+
+.groom-wing {
+    width: 26px;
+    height: 26px;
+    background: #10b981;
+    border-radius: 60% 10% 60% 10%;
+    bottom: 26px;
+    right: -6px;
+    transform: rotate(18deg);
+}
+
+.groom-head {
+    width: 46px;
+    height: 40px;
+    background: #6ee7b7;
+    border-radius: 50%;
+    top: 4px;
+    left: 8px;
+}
+
+.groom-horn {
+    width: 6px;
+    height: 10px;
+    background: #059669;
+    border-radius: 50% 50% 20% 20%;
+    top: -6px;
+}
+.gh-l { left: 11px; transform: rotate(-16deg); }
+.gh-r { right: 11px; transform: rotate(16deg); }
+
+.groom-eye {
+    width: 9px;
+    height: 10px;
+    border-radius: 50%;
+    top: 13px;
+    background:
+        radial-gradient(circle at 66% 28%, #fff 0 20%, transparent 21%),
+        radial-gradient(circle at 50% 48%, #1f2937 0 58%, #fff 59% 100%);
+}
+.ge-l { left: 8px; }
+.ge-r { right: 8px; }
+
+.groom-smile {
+    width: 14px;
+    height: 7px;
+    border-bottom: 2px solid #1f2937;
+    border-radius: 0 0 70% 70%;
+    top: 26px;
+    left: 16px;
+}
+
+/* A bow tie: two triangles meeting at a little knot. */
+.bowtie {
+    width: 18px;
+    height: 9px;
+    bottom: 34px;
+    left: 22px;
+    background: #1e293b;
+    clip-path: polygon(0 0, 42% 50%, 0 100%, 100% 100%, 58% 50%, 100% 0);
+}
+
+.groom-name {
+    bottom: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.52rem;
+    white-space: nowrap;
+    opacity: 0.85;
+}
+
+/* --- Lydia as the bride --- */
+
+/* A white dress and earrings, added only once she is married and only in
+   the wedding room. The ::after draws the skirt under her body. */
+.dragon.bride .body::after {
+    content: '';
+    position: absolute;
+    bottom: -22%;
+    left: -22%;
+    width: 144%;
+    height: 92%;
+    background: linear-gradient(180deg, #ffffff, #f1f5f9);
+    border-radius: 46% 46% 50% 50% / 30% 30% 70% 70%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    z-index: -1;
+}
+
+/* A veil trailing back from behind her horns. */
+.dragon.bride .head::after {
+    content: '';
+    position: absolute;
+    top: -14%;
+    left: -16%;
+    width: 132%;
+    height: 118%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50% 50% 44% 44%;
+    pointer-events: none;
+}
+
+/* Earrings: one little pearl hanging by each cheek. */
+.dragon.bride .d-blush::after {
+    content: '';
+    position: absolute;
+    bottom: -80%;
+    left: 30%;
+    width: 5px;
+    height: 5px;
+    background: #fef3c7;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(254, 243, 199, 0.9);
+}
+
+.married-banner {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: #7f1d1d;
+    background: linear-gradient(180deg, #fef3c7, #fcd34d);
+    padding: 4px 14px;
+    border-radius: 999px;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    white-space: nowrap;
+}
+
 /* ---------- Where Lydia stands in each room ---------- */
+
+/* Shifted left so Leonard has room to stand beside her. */
+.stage-wedding #pet-dragon { transform: scale(0.62) translate(-46px, 22px); }
 
 .stage-fair #pet-dragon { transform: scale(0.5) translateY(58px); }
 .stage-show #pet-dragon { transform: scale(0.6) translateY(28px); }

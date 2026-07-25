@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pet Fable</title>
-    <!-- The ?v=14 number on the end is a trick to beat the browser's memory. The
+    <!-- The ?v=16 number on the end is a trick to beat the browser's memory. The
          browser saves files to load pages faster, and it decides they are
          the same file by their name. Change the name even slightly and it
          fetches a fresh copy. Bump this number after big changes. -->
-    <link rel="stylesheet" href="index.css?v=14">
+    <link rel="stylesheet" href="index.css?v=16">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -259,6 +259,65 @@
                     <span class="prop note n3">🎤</span>
                 </div>
 
+                <!-- ===== Room 8: the wedding ===== -->
+                <div class="room room-wedding">
+                    <!-- Fairy lights strung across the top. -->
+                    <span class="fairy-lights"></span>
+
+                    <!-- The flower arch Lydia stands under. -->
+                    <div class="arch">
+                        <span class="arch-flower af1">🌸</span>
+                        <span class="arch-flower af2">🌷</span>
+                        <span class="arch-flower af3">🌸</span>
+                        <span class="arch-flower af4">💜</span>
+                        <span class="arch-flower af5">🌷</span>
+                    </div>
+
+                    <!-- The aisle runner, wider at the front so it looks
+                         like it stretches away from you. -->
+                    <div class="aisle">
+                        <span class="petal-strip"></span>
+                    </div>
+
+                    <!-- Guests sitting on both sides. -->
+                    <span class="guests guests-l">🧍🧍‍♀️</span>
+                    <span class="guests guests-r">🧍‍♂️🧍</span>
+
+                    <!-- The five layer cake she asked for. -->
+                    <div class="wcake">
+                        <span class="tier t1"></span>
+                        <span class="tier t2"></span>
+                        <span class="tier t3"></span>
+                        <span class="tier t4"></span>
+                        <span class="tier t5"></span>
+                        <span class="cake-top">💜</span>
+                    </div>
+
+                    <!-- Petals drifting down. -->
+                    <span class="petal p1">🌸</span>
+                    <span class="petal p2">🌷</span>
+                    <span class="petal p3">🌸</span>
+                    <span class="petal p4">💐</span>
+
+                    <!-- Leonard Hostetler, the groom. A green dragon in a
+                         bow tie, standing next to Lydia at the altar. -->
+                    <div id="groom" class="hidden">
+                        <span class="groom-wing"></span>
+                        <span class="groom-body"></span>
+                        <span class="groom-head">
+                            <span class="groom-horn gh-l"></span>
+                            <span class="groom-horn gh-r"></span>
+                            <span class="groom-eye ge-l"></span>
+                            <span class="groom-eye ge-r"></span>
+                            <span class="groom-smile"></span>
+                        </span>
+                        <span class="bowtie"></span>
+                        <span class="groom-name">Leonard</span>
+                    </div>
+
+                    <div class="married-banner hidden" id="married-banner">JUST MARRIED 💍</div>
+                </div>
+
                 <div id="pet-dragon" class="dragon-slot"></div>
                 <div id="zzz" class="hidden">💤</div>
                 <div id="floaties"></div>
@@ -274,6 +333,7 @@
                 <button class="room-btn" data-room="tramp">🤸<span>Trampoline</span></button>
                 <button class="room-btn" data-room="fair">🎡<span>Fun Fair</span></button>
                 <button class="room-btn" data-room="show">🎭<span>Show Stage</span></button>
+                <button class="room-btn" data-room="wedding">💒<span>Wedding</span></button>
             </div>
 
             <!-- Extra things to do that only exist in certain places.
@@ -379,6 +439,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="script.js?v=14"></script>
+    <script src="script.js?v=16"></script>
 </body>
 </html>
