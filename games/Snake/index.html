@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snake!</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+
+        <div id="ui-layer">
+            <div class="glass-panel">
+                <div class="stat">Score: <span id="score">0</span></div>
+                <div class="stat">Best: <span id="best">0</span></div>
+            </div>
+        </div>
+
+        <div id="start-screen" class="screen active">
+            <h1>Snake!</h1>
+            <p>Eat your veggies 🥦🥗🍓🥕 and grow as long as you can.</p>
+            <p>Don't hit the walls, and don't bite your own tail!</p>
+            <p class="controls-hint">Arrow keys or WASD<br>On a phone, swipe</p>
+
+            <p class="pick-label">Pick your speed:</p>
+
+            <!-- Each button carries its own speed in a data-speed attribute.
+                 script.js reads that word to know which speed was picked, so
+                 adding a fourth speed means adding a button and one line. -->
+            <div class="speed-buttons">
+                <button class="speed-btn" data-speed="chill">🐢<span>Chill</span></button>
+                <button class="speed-btn" data-speed="normal">🙂<span>Normal</span></button>
+                <button class="speed-btn" data-speed="speedy">⚡<span>Speedy</span></button>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="screen">
+            <h1>Game Over!</h1>
+            <p id="game-over-reason">You crashed!</p>
+            <p>You ate <span id="final-score">0</span> healthy foods.</p>
+            <p id="new-best" class="hidden">🏆 New best score! 🏆</p>
+            <button id="restart-btn">Play Again</button>
+            <button id="change-speed-btn" class="link-btn">Change speed</button>
+        </div>
+
+        <!-- The playing board. script.js fills this with squares. -->
+        <div id="game-area"></div>
+
+        <a class="back-link" href="../../">← Back to the arcade</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
