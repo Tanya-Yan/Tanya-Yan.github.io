@@ -2438,3 +2438,56 @@ button:active { transform: scale(0.95); }
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     z-index: 150;
 }
+
+/* ---------- Wide screens ----------
+   Lydia and her rooms on the left, her bars and buttons on the right,
+   so nothing has to be scrolled to on a laptop. */
+@media (min-width: 1000px) {
+    body { align-items: flex-start; }
+
+    #game-container {
+        max-width: 1080px;
+        height: auto;
+        min-height: 100vh;
+        max-height: none;
+        border-radius: 0;
+    }
+
+    #pet-screen {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        grid-template-areas:
+            "name    name"
+            "stage   purse"
+            "stage   bars"
+            "stage   extras"
+            "stage   actions"
+            "rooms   phone"
+            "rooms   reset";
+        gap: 14px 28px;
+        align-content: start;
+        padding: 24px 28px 70px;
+        overflow: visible;
+    }
+
+    #pet-name  { grid-area: name; font-size: 2.4rem; }
+    #stage     { grid-area: stage; height: 460px; max-height: none; }
+    .purse     { grid-area: purse; font-size: 1.15rem; justify-self: start; }
+    .bars      { grid-area: bars; max-width: none; }
+    .extras    { grid-area: extras; align-self: start; }
+    #pet-screen .actions { grid-area: actions; align-self: start; }
+    .rooms-nav { grid-area: rooms; }
+    .phone-open{ grid-area: phone; justify-self: start; align-self: start; }
+    #reset-btn { grid-area: reset; justify-self: start; }
+
+    .bar-label { font-size: 1rem; width: 110px; }
+    .bar-track { height: 22px; }
+    .action-btn { font-size: 2rem; padding: 16px 24px; }
+    .action-btn span { font-size: 0.95rem; }
+    .room-btn  { font-size: 1.6rem; padding: 11px 16px; }
+    .room-btn span { font-size: 0.8rem; }
+    .extra-btn { font-size: 1.6rem; padding: 11px 16px; }
+    .extra-btn span { font-size: 0.78rem; }
+    #speech    { font-size: 1.1rem; }
+    .screen h1 { font-size: 3.4rem; }
+}

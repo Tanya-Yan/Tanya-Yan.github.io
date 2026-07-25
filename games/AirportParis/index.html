@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Airport to Paris</title>
+    <link rel="stylesheet" href="index.css?v=16">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="game">
+
+    <!-- ===== Start ===== -->
+    <div id="start-screen" class="screen active">
+        <h1>Airport ✈️ Paris</h1>
+        <p>You work at the airport check-in desk.<br>
+           Get the passengers onto their flights!</p>
+        <p class="small">Check the passport, weigh the bag, pick the right gate.<br>
+           Get enough of them right and <b>you</b> fly to Paris. 🗼</p>
+        <button id="fly-now-btn">✈️ Train to the gate, then fly!</button>
+        <button id="drive-btn">🚈 DRIVE the train yourself!</button>
+        <button id="train-only-btn" class="ghost">🚈 Just the shuttle train</button>
+        <button id="start-btn" class="ghost">🛂 Work the check-in desk first</button>
+    </div>
+
+    <!-- ===== The check-in desk ===== -->
+    <div id="desk-screen" class="screen">
+
+        <div class="top-bar">
+            <span id="stamped">✅ 0 boarded</span>
+            <span id="mistakes">❌ 0 mistakes</span>
+            <span id="to-paris">🗼 0 / 6</span>
+        </div>
+
+        <div class="board">
+            <div class="board-title">✈️ DEPARTURES</div>
+            <div id="board-rows"></div>
+        </div>
+
+        <div class="passenger-card">
+            <div class="pass-top">
+                <div id="pass-face">🧍</div>
+                <div>
+                    <div id="pass-name">Name</div>
+                    <div class="pass-sub" id="pass-sub">wants to fly</div>
+                </div>
+            </div>
+
+            <!-- Their passport, which you have to check -->
+            <div class="passport" id="passport">
+                <div class="passport-title">🛂 PASSPORT</div>
+                <div class="passport-row"><span>Name</span><b id="pp-name">—</b></div>
+                <div class="passport-row"><span>Expires</span><b id="pp-expiry">—</b></div>
+                <div class="passport-row"><span>Photo</span><b id="pp-photo">—</b></div>
+            </div>
+
+            <!-- Their suitcase on the scales -->
+            <div class="scales">
+                <div class="bag">🧳</div>
+                <div class="scale-readout"><span id="bag-weight">0</span> kg</div>
+                <div class="scale-limit">limit: 23 kg</div>
+            </div>
+        </div>
+
+        <div id="desk-label">What do you do?</div>
+
+        <div class="actions">
+            <button id="accept-btn">✅ Check them in</button>
+            <button id="reject-btn" class="warn">🚫 Turn away</button>
+            <button id="excess-btn" class="ghost">💰 Charge extra bag fee</button>
+        </div>
+
+        <!-- Choosing a gate, after they are checked in -->
+        <div id="gate-panel" class="hidden">
+            <div class="gate-question" id="gate-question">Which gate?</div>
+            <div class="gate-row" id="gate-row"></div>
+        </div>
+    </div>
+
+    <!-- ===== The shuttle train between terminals ===== -->
+    <div id="train-screen" class="screen">
+        <h2>🚈 Airport Shuttle</h2>
+
+        <!-- Where you need to get off -->
+        <div id="train-strip">
+            <span>YOUR GATE</span>
+            <b id="train-gate">A1</b>
+            <span id="train-stopname">Gates A</span>
+        </div>
+
+        <!-- The platform and the train -->
+        <div id="platform">
+            <div class="station-sign" id="station-sign">TERMINAL 1</div>
+
+            <div id="train">
+                <div class="carriage">
+                    <span class="car-window"></span>
+                    <span class="car-door"></span>
+                    <span class="car-window"></span>
+                </div>
+                <div class="carriage">
+                    <span class="car-window"></span>
+                    <span class="car-door"></span>
+                    <span class="car-window"></span>
+                </div>
+                <div class="carriage front">
+                    <span class="car-window"></span>
+                    <span class="car-door"></span>
+                    <span class="car-light"></span>
+                </div>
+            </div>
+
+            <div id="rail"></div>
+            <div id="platform-floor">
+                <span class="ppl w1">🧍</span>
+                <span class="ppl w2">🧍‍♀️</span>
+                <span class="ppl you" id="you-on-platform">🧑</span>
+                <span class="ppl w3">🧍‍♂️</span>
+            </div>
+        </div>
+
+        <div id="train-label">The train is coming...</div>
+
+        <div class="actions">
+            <button id="board-btn" disabled>🚪 Get on</button>
+            <button id="getoff-btn" class="hidden">🛑 Get off here!</button>
+        </div>
+    </div>
+
+    <!-- ===== YOU DRIVE THE TRAIN ===== -->
+    <div id="cab-screen" class="screen">
+
+        <div id="cab-strip">
+            <span id="cab-line">🚈 AIRPORT LINE</span>
+            <span id="cab-next">Next: TERMINAL 2</span>
+            <span id="cab-pax">👥 0</span>
+        </div>
+
+        <!-- The dials in front of you -->
+        <div id="dash">
+            <div class="dial">
+                <div class="dial-num" id="cab-speed">0</div>
+                <div class="dial-label">km/h</div>
+            </div>
+            <div class="dial big">
+                <div class="dial-num" id="cab-dist">1200</div>
+                <div class="dial-label">metres to station</div>
+            </div>
+            <div class="dial">
+                <div class="dial-num" id="cab-limit">40</div>
+                <div class="dial-label">speed limit</div>
+            </div>
+        </div>
+
+        <!-- The view down the track -->
+        <div id="track-view">
+            <div id="signal"><span class="lamp red"></span><span class="lamp green"></span></div>
+            <div id="track-station">
+                <!-- The terminal building standing behind the platform -->
+                <span class="stn-building">
+                    <span class="stn-roof"></span>
+                    <span class="stn-windows"></span>
+                    <span class="stn-doors"></span>
+                </span>
+
+                <span class="plat-sign" id="plat-sign">TERMINAL 2</span>
+                <span class="plat-body"></span>
+
+                <!-- Real people waiting on the platform. script.js fills
+                     this in, and they walk on when the doors open. -->
+                <span class="stn-people" id="stn-people"></span>
+
+                <span class="stop-mark">▼ STOP</span>
+            </div>
+            <div id="cab-train">
+                <span class="cab-front"></span>
+                <span class="cab-glass"></span>
+                <!-- The people riding in your train, seen through the side -->
+                <span class="riders" id="riders"></span>
+                <span class="cab-door" id="cab-door"></span>
+            </div>
+            <div id="cab-rail"></div>
+        </div>
+
+        <!-- The stopping meter, only shown when you are close -->
+        <div id="stop-meter" class="hidden">
+            <div class="stop-track"><div class="stop-zone"></div><div class="stop-needle" id="stop-needle"></div></div>
+            <div class="bake-labels"><span>too soon</span><span>PERFECT</span><span>overshot</span></div>
+        </div>
+
+        <div id="cab-label">Doors are open. Close them to set off!</div>
+
+        <!-- The driving desk: a wheel, two levers and the switches -->
+        <div id="driving-desk">
+
+            <!-- Power lever. Pull it back for more power. -->
+            <div class="lever-box">
+                <div class="lever-slot">
+                    <div class="lever-stick" id="power-lever"><span class="lever-knob"></span></div>
+                </div>
+                <div class="lever-name">POWER</div>
+            </div>
+
+            <!-- The wheel in the middle, which spins as you drive -->
+            <div class="wheel-box">
+                <div id="drive-wheel">
+                    <span class="spoke s1"></span>
+                    <span class="spoke s2"></span>
+                    <span class="spoke s3"></span>
+                    <span class="hub">🚈</span>
+                </div>
+                <div class="lever-name">DRIVER</div>
+            </div>
+
+            <!-- Brake lever -->
+            <div class="lever-box">
+                <div class="lever-slot brake">
+                    <div class="lever-stick" id="brake-lever"><span class="lever-knob red"></span></div>
+                </div>
+                <div class="lever-name">BRAKE</div>
+            </div>
+        </div>
+
+        <!-- The switches along the front of the desk -->
+        <div id="switch-row">
+            <span class="sw" id="sw-doors">🚪<b>DOORS</b></span>
+            <span class="sw" id="sw-horn">📢<b>HORN</b></span>
+            <span class="sw" id="sw-lights">💡<b>LIGHTS</b></span>
+        </div>
+
+        <div class="actions">
+            <button id="brake-btn" class="warn">🔻 Brake</button>
+            <button id="power-btn">⏫ Power</button>
+            <button id="doors-btn" class="ghost">🚪 Close doors</button>
+        </div>
+    </div>
+
+    <!-- ===== You fly the plane ===== -->
+    <div id="fly-screen" class="screen">
+
+        <!-- Which flight this is, like the strip in a real cockpit -->
+        <div id="flight-strip">
+            <span id="flight-no">TY 001</span>
+            <span id="flight-route">LHR → CDG</span>
+            <span id="flight-pax">👥 148</span>
+        </div>
+
+        <h2 id="fly-title">✈️ Captain, you're flying!</h2>
+
+        <div class="cockpit-bar">
+            <span>SPEED <b id="speed">0</b></span>
+            <span>ALT <b id="alt">0</b> ft</span>
+            <span>⭐ <b id="stars">0</b></span>
+        </div>
+
+        <!-- What you see out of the window -->
+        <div id="sky">
+            <!-- ===== The airport ===== -->
+
+            <!-- The city, far away behind everything -->
+            <div class="skyline">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+            </div>
+
+            <div id="horizon">
+                <!-- Main terminal: a long building with lit windows and a
+                     curved glass roof -->
+                <div class="terminal">
+                    <span class="term-roof"></span>
+                    <span class="term-windows"></span>
+                    <span class="term-sign">✈ TERMINAL 1</span>
+                    <span class="term-door d1"></span>
+                    <span class="term-door d2"></span>
+                </div>
+
+                <!-- Control tower -->
+                <div class="tower-ctrl">
+                    <span class="tw-cab"></span>
+                    <span class="tw-roof"></span>
+                    <span class="tw-light"></span>
+                </div>
+
+                <!-- Aircraft hangar with a curved roof -->
+                <div class="hangar">
+                    <span class="hangar-door"></span>
+                </div>
+
+                <!-- Jet bridges reaching out to the parked planes -->
+                <span class="bridge b1"></span>
+                <span class="bridge b2"></span>
+
+                <!-- Planes parked at the gates -->
+                <span class="parked p1">🛫</span>
+                <span class="parked p2">✈️</span>
+                <span class="parked p3">🛩️</span>
+
+                <!-- Ground crew and vehicles on the apron -->
+                <span class="ground g1">🚚</span>
+                <span class="ground g2">🦺</span>
+                <span class="ground g3">🛻</span>
+
+                <!-- The apron the planes sit on -->
+                <span class="apron"></span>
+            </div>
+
+            <!-- Your aircraft, drawn from shapes rather than an emoji, so
+                 it has a body, wings, engines, a tail and windows. -->
+            <div id="plane-you">
+                <span class="pl-wing pl-wing-l"></span>
+                <span class="pl-wing pl-wing-r"></span>
+                <span class="pl-engine pl-eng-l"></span>
+                <span class="pl-engine pl-eng-r"></span>
+                <span class="pl-body"></span>
+                <span class="pl-nose"></span>
+                <span class="pl-tail"></span>
+                <span class="pl-fin"></span>
+                <span class="pl-windows"></span>
+                <span class="pl-cockpit"></span>
+            </div>
+
+            <div id="runway">
+                <span class="rw-number">24</span>
+                <span class="rw-edge left"></span>
+                <span class="rw-edge right"></span>
+            </div>
+        </div>
+
+        <!-- The cabin behind you. These are the real people you boarded,
+             and their faces change with how the flight is going. -->
+        <div id="cabin">
+            <div class="cabin-head">
+                <span>🎫 CABIN</span>
+                <span id="cabin-mood">Everyone's settling in</span>
+            </div>
+            <div id="cabin-seats"></div>
+            <div class="cabin-foot">
+                <span id="seatbelt-sign" class="belt on">🔔 SEATBELTS</span>
+                <button id="pa-btn">📢 Speak to the cabin</button>
+            </div>
+        </div>
+
+        <!-- Your co-pilot sits beside you and calls things out. -->
+        <div id="copilot">
+            <span id="copilot-face">🧑‍✈️</span>
+            <span id="copilot-says">Ready when you are, Captain!</span>
+        </div>
+
+        <div id="fly-label">Press Throttle up to get rolling!</div>
+
+        <!-- The checklist before take off -->
+        <div id="checklist">
+            <button class="check-btn" data-step="0">🚪<span>Close doors</span></button>
+            <button class="check-btn" data-step="1">🔥<span>Start engines</span></button>
+            <button class="check-btn" data-step="2">🛫<span>Set flaps</span></button>
+            <button class="check-btn" data-step="3">📻<span>Get clearance</span></button>
+        </div>
+
+        <div class="fly-controls hidden" id="fly-controls">
+            <button id="left-btn" class="steer">◀</button>
+            <button id="throttle-btn">🔥 Throttle up</button>
+            <button id="right-btn" class="steer">▶</button>
+        </div>
+
+        <button id="pullup-btn" class="hidden">🛫 Pull up!</button>
+
+        <!-- Landing -->
+        <div id="land-panel" class="hidden">
+            <div class="bake-track">
+                <div class="land-zone"></div>
+                <div class="bake-fill" id="land-fill"></div>
+            </div>
+            <div class="bake-labels"><span>too high</span><span>GENTLE</span><span>too fast</span></div>
+            <button id="land-btn">🛬 Touch down!</button>
+        </div>
+    </div>
+
+    <!-- ===== You fly to Paris ===== -->
+    <div id="paris-screen" class="screen">
+        <div id="plane">✈️</div>
+        <h1 id="paris-title">Bonjour, Paris! 🗼</h1>
+
+        <div id="paris-scene">
+            <div class="tower">
+                <span class="tower-top"></span>
+                <span class="tower-mid"></span>
+                <span class="tower-legs"></span>
+            </div>
+            <span class="cloud c1">☁️</span>
+            <span class="cloud c2">☁️</span>
+            <span class="sun">🌤️</span>
+        </div>
+
+        <p id="paris-text">You worked your shift and earned your trip!</p>
+
+        <div class="paris-things" id="paris-things"></div>
+
+        <div id="paris-result"></div>
+        <button id="again-btn">Work another shift</button>
+    </div>
+
+    <a class="back-link" href="../../">← Back to the arcade</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="script.js?v=16"></script>
+</body>
+</html>

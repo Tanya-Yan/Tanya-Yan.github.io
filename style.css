@@ -118,3 +118,29 @@ footer {
     opacity: 0.9;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
+
+/* ============================================================
+   WIDE SCREENS
+
+   The page asks how wide the window is, not what device it is. A tablet,
+   a phone turned sideways and a small window all get the right layout
+   without having to guess what they are.
+   ============================================================ */
+
+@media (min-width: 1000px) {
+    body { padding: 60px 40px; }
+
+    h1 { font-size: 4rem; }
+    .tagline { font-size: 1.4rem; }
+
+    .game-grid {
+        max-width: 1240px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+    }
+
+    .game-card { padding: 38px 28px; }
+    .game-emoji { font-size: 5rem; }
+    .game-title { font-size: 1.7rem; }
+    .game-blurb { font-size: 1.05rem; }
+}

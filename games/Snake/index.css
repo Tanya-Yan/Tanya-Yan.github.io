@@ -335,3 +335,20 @@ button:active { transform: scale(0.96); }
 }
 
 .back-link:hover { opacity: 1; }
+
+/* ---------- Wide screens ----------
+   The board now fits the SHORTER of the width and the height, so on a
+   landscape laptop it shrinks to fit rather than running off the bottom. */
+#game-area {
+    width:  min(88vw, 62vh, 520px);
+    height: min(88vw, 62vh, 520px);
+}
+
+@media (min-width: 1000px) {
+    #game-container { max-width: 680px; border-radius: 28px; }
+    .glass-panel { font-size: 1.3rem; }
+    .screen h1 { font-size: 3.6rem; }
+    .screen p  { font-size: 1.2rem; }
+    .speed-btn { font-size: 2rem; padding: 18px 26px; }
+    .speed-btn span { font-size: 1rem; }
+}

@@ -1,0 +1,1827 @@
+:root { --primary: #2563eb; --warn: #dc2626; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #bfdbfe, #e0e7ff, #fbcfe8, #a5f3fc);
+    background-size: 400% 400%;
+    animation: skyBg 18s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    color: #1e293b;
+}
+
+@keyframes skyBg {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#game {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    min-height: 100vh;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    overflow: hidden;
+}
+
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 14px 56px;
+    min-height: 100vh;
+}
+
+.screen.active { display: flex; }
+
+h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.1rem;
+    color: white;
+    text-shadow: 0 3px 12px rgba(37, 99, 235, 0.55);
+    text-align: center;
+}
+
+#start-screen, #paris-screen { justify-content: center; text-align: center; gap: 14px; }
+#start-screen p { font-size: 1rem; line-height: 1.5; }
+.small { font-size: 0.85rem !important; opacity: 0.78; }
+
+.hidden { display: none !important; }
+
+button {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.02rem;
+    color: white;
+    background: var(--primary);
+    border: none;
+    border-radius: 999px;
+    padding: 11px 24px;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(37, 99, 235, 0.4);
+    transition: transform 0.13s ease;
+}
+
+button:hover  { transform: scale(1.05); }
+button:active { transform: scale(0.95); }
+
+button.warn  { background: var(--warn); box-shadow: 0 5px 16px rgba(220, 38, 38, 0.4); }
+button.ghost {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1e293b;
+    box-shadow: none;
+    border: 2px solid white;
+    font-size: 0.82rem;
+    padding: 10px 16px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 14px;
+    padding: 9px 12px;
+    font-size: 0.82rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- The departures board ---------- */
+
+/* Yellow letters on black, like every airport board ever. */
+.board {
+    width: 100%;
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 9px 11px;
+    color: #fbbf24;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.72rem;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.35);
+}
+
+.board-title {
+    letter-spacing: 2px;
+    border-bottom: 2px solid #334155;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.board-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    letter-spacing: 1px;
+}
+
+.board-row .city { flex: 1; text-align: left; }
+.board-row .gate { color: #86efac; }
+
+/* The row for the flight this passenger wants, so it stands out. */
+.board-row.theirs { background: rgba(251, 191, 36, 0.16); border-radius: 4px; }
+
+/* ---------- The passenger ---------- */
+
+.passenger-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.14);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pass-top { display: flex; align-items: center; gap: 12px; }
+
+#pass-face {
+    font-size: 2.6rem;
+    animation: walkUp 0.4s ease;
+}
+
+@keyframes walkUp {
+    from { transform: translateX(50px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+#pass-name { font-family: 'Fredoka One', cursive; font-size: 1.05rem; }
+.pass-sub  { font-size: 0.82rem; opacity: 0.8; }
+
+/* ---------- The passport ---------- */
+
+.passport {
+    background: #1e3a8a;
+    color: #fef3c7;
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 0.76rem;
+    box-shadow: inset 0 0 0 2px #fbbf24;
+}
+
+.passport-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.72rem;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+    padding-bottom: 4px;
+    margin-bottom: 5px;
+}
+
+.passport-row { display: flex; justify-content: space-between; padding: 2px 0; }
+.passport-row span { opacity: 0.75; }
+
+/* A problem on the passport shows up red. */
+.passport-row b.bad { color: #fca5a5; }
+
+/* ---------- The luggage scales ---------- */
+
+.scales {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+.bag { font-size: 1.9rem; }
+
+.scale-readout {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    background: #0f172a;
+    color: #4ade80;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+/* Over the limit, so the display turns red. */
+.scale-readout.over { color: #f87171; }
+
+.scale-limit { font-size: 0.72rem; opacity: 0.7; }
+
+#desk-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    min-height: 20px;
+    text-align: center;
+}
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+/* ---------- Choosing a gate ---------- */
+
+#gate-panel {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.14);
+}
+
+.gate-question { font-size: 0.9rem; margin-bottom: 9px; }
+.gate-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+.gate-btn {
+    font-size: 1rem;
+    padding: 11px 18px;
+    border-radius: 12px;
+    background: #16a34a;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+}
+
+/* ============================================================
+   THE COCKPIT
+   ============================================================ */
+
+/* The cockpit has a lot in it now: flight strip, instruments, the window,
+   the cabin, the co-pilot and the controls. That is taller than a phone
+   screen, and #game hides anything that overflows, which is exactly how
+   the Swim button went missing in Pet Fable. Scrolling from the top means
+   nothing can be lost off the bottom. */
+#fly-screen {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: hidden;
+    gap: 8px;
+    padding: 12px 14px 70px;
+}
+
+#fly-screen::-webkit-scrollbar { width: 0; }
+
+/* The window shrinks on a short screen so the controls stay in view. */
+#sky { flex-shrink: 0; }
+
+.cockpit-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #0f172a;
+    color: #4ade80;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.78rem;
+    border-radius: 12px;
+    padding: 9px 14px;
+    letter-spacing: 1px;
+    box-shadow: inset 0 0 16px rgba(74, 222, 128, 0.2);
+}
+
+/* What you see out of the window. */
+#sky {
+    position: relative;
+    width: 100%;
+    height: min(250px, 32vh);
+    min-height: 190px;
+    background: linear-gradient(180deg, #1e3a8a 0%, #60a5fa 55%, #bbf7d0 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Your aircraft ----------
+
+   Seen from behind and slightly above, which is why the wings spread out
+   sideways and the tail fin points up. Every piece is one box. */
+#plane-you {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    width: 76px;
+    height: 62px;
+    transform: translateX(-50%);
+    transition: bottom 0.25s ease, transform 0.12s ease;
+    z-index: 6;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+#plane-you span { position: absolute; }
+
+/* The fuselage down the middle. */
+.pl-body {
+    left: 50%;
+    margin-left: -9px;
+    top: 6px;
+    width: 18px;
+    height: 46px;
+    background: linear-gradient(90deg, #cbd5e1, #f8fafc 45%, #94a3b8);
+    border-radius: 9px 9px 6px 6px;
+}
+
+/* The pointed nose at the front. */
+.pl-nose {
+    left: 50%;
+    margin-left: -9px;
+    top: 0;
+    width: 18px;
+    height: 12px;
+    background: #f1f5f9;
+    border-radius: 50% 50% 0 0;
+}
+
+/* Wings, swept back the way jet wings are. */
+.pl-wing {
+    top: 22px;
+    width: 30px;
+    height: 9px;
+    background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+}
+
+.pl-wing-l {
+    left: -2px;
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    border-radius: 0 0 0 4px;
+}
+
+.pl-wing-r {
+    right: -2px;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    border-radius: 0 0 4px 0;
+}
+
+/* An engine slung under each wing. */
+.pl-engine {
+    top: 28px;
+    width: 9px;
+    height: 14px;
+    background: linear-gradient(90deg, #64748b, #cbd5e1, #475569);
+    border-radius: 4px;
+}
+.pl-eng-l { left: 12px; }
+.pl-eng-r { right: 12px; }
+
+/* The little wings at the back. */
+.pl-tail {
+    bottom: 2px;
+    left: 50%;
+    margin-left: -17px;
+    width: 34px;
+    height: 7px;
+    background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+    border-radius: 3px;
+}
+
+/* The fin standing up, in the airline's blue. */
+.pl-fin {
+    bottom: 4px;
+    left: 50%;
+    margin-left: -4px;
+    width: 8px;
+    height: 18px;
+    background: linear-gradient(180deg, #2563eb, #1e3a8a);
+    border-radius: 3px 3px 0 0;
+}
+
+/* A row of cabin windows down each side of the fuselage. */
+.pl-windows {
+    top: 16px;
+    left: 50%;
+    margin-left: -7px;
+    width: 14px;
+    height: 30px;
+    background-image: repeating-linear-gradient(
+        180deg,
+        rgba(56, 189, 248, 0.9) 0 3px,
+        transparent 3px 7px
+    );
+    border-radius: 3px;
+}
+
+/* The cockpit glass at the very front. */
+.pl-cockpit {
+    top: 4px;
+    left: 50%;
+    margin-left: -6px;
+    width: 12px;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 6px 6px 2px 2px;
+    opacity: 0.85;
+}
+
+/* ---------- The airport ---------- */
+
+/* The city far behind, made of eight blocks of different heights. Faded
+   and blue-grey, because things far away lose colour and contrast. */
+.skyline {
+    position: absolute;
+    bottom: 96px;
+    left: 0;
+    right: 0;
+    height: 46px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 0 6px;
+    opacity: 0.4;
+    z-index: 0;
+}
+
+.skyline span {
+    flex: 1;
+    background: #1e293b;
+    border-radius: 2px 2px 0 0;
+    /* Rows of tiny lit windows. */
+    background-image: repeating-linear-gradient(
+            0deg, rgba(254,240,138,0.5) 0 2px, transparent 2px 7px),
+        repeating-linear-gradient(
+            90deg, rgba(254,240,138,0.5) 0 2px, transparent 2px 6px);
+}
+
+.skyline span:nth-child(1) { height: 40%; }
+.skyline span:nth-child(2) { height: 68%; }
+.skyline span:nth-child(3) { height: 52%; }
+.skyline span:nth-child(4) { height: 88%; }
+.skyline span:nth-child(5) { height: 46%; }
+.skyline span:nth-child(6) { height: 74%; }
+.skyline span:nth-child(7) { height: 58%; }
+.skyline span:nth-child(8) { height: 36%; }
+
+#horizon {
+    position: absolute;
+    bottom: 54px;
+    left: 0;
+    right: 0;
+    height: 96px;
+    z-index: 1;
+}
+
+#horizon > * { position: absolute; }
+
+/* The tarmac the planes and vehicles stand on. */
+.apron {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 26px;
+    background: #78716c;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18);
+    z-index: 0;
+}
+
+/* --- the terminal --- */
+
+.terminal {
+    left: 6px;
+    bottom: 22px;
+    width: 168px;
+    height: 54px;
+    background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+/* The curved glass roof along the top. */
+.term-roof {
+    position: absolute;
+    top: -9px;
+    left: -4px;
+    right: -4px;
+    height: 14px;
+    background: linear-gradient(180deg, #7dd3fc, #38bdf8);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Two rows of lit windows, drawn as a repeating pattern rather than
+   dozens of separate boxes. */
+.term-windows {
+    position: absolute;
+    top: 12px;
+    left: 6px;
+    right: 6px;
+    height: 22px;
+    background-image: repeating-linear-gradient(
+        90deg,
+        #fef08a 0 9px,
+        transparent 9px 15px
+    );
+    background-size: 15px 9px;
+    background-repeat: repeat;
+    opacity: 0.95;
+    border-radius: 2px;
+}
+
+.term-sign {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.42rem;
+    letter-spacing: 1px;
+    color: #1e3a8a;
+}
+
+/* Glass doors at the front. */
+.term-door {
+    position: absolute;
+    bottom: 0;
+    width: 16px;
+    height: 11px;
+    background: #38bdf8;
+    border-radius: 2px 2px 0 0;
+    box-shadow: inset 0 0 0 1px #64748b;
+}
+.d1 { left: 38px; }
+.d2 { left: 108px; }
+
+/* --- control tower --- */
+
+.tower-ctrl {
+    right: 96px;
+    bottom: 22px;
+    width: 15px;
+    height: 74px;
+    background: linear-gradient(90deg, #cbd5e1, #94a3b8, #cbd5e1);
+    border-radius: 3px;
+    z-index: 3;
+}
+
+/* The wide glass cab at the top where the controllers sit. */
+.tw-cab {
+    position: absolute;
+    top: 6px;
+    left: -11px;
+    width: 37px;
+    height: 15px;
+    background: linear-gradient(180deg, #7dd3fc, #0ea5e9);
+    border: 2px solid #64748b;
+    border-radius: 4px;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+.tw-roof {
+    position: absolute;
+    top: 0;
+    left: -13px;
+    width: 41px;
+    height: 6px;
+    background: #475569;
+    border-radius: 3px;
+}
+
+/* The red light on top, blinking like a real one. */
+.tw-light {
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    margin-left: -3px;
+    width: 6px;
+    height: 6px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ef4444;
+    animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 1; }
+}
+
+/* --- hangar --- */
+
+.hangar {
+    right: 6px;
+    bottom: 22px;
+    width: 74px;
+    height: 40px;
+    background: linear-gradient(180deg, #a8a29e, #78716c);
+    /* The rounded roof that makes it read as a hangar. */
+    border-radius: 40px 40px 3px 3px / 34px 34px 3px 3px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+.hangar-door {
+    position: absolute;
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 25px;
+    background: #44403c;
+    border-radius: 22px 22px 0 0 / 16px 16px 0 0;
+    box-shadow: inset 0 0 0 2px #57534e;
+}
+
+/* --- jet bridges reaching out to the planes --- */
+
+.bridge {
+    bottom: 30px;
+    height: 6px;
+    background: #d6d3d1;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+.b1 { left: 172px; width: 24px; }
+.b2 { left: 226px; width: 24px; }
+
+/* --- planes parked at the gates --- */
+
+.parked {
+    bottom: 20px;
+    font-size: 1.5rem;
+    z-index: 3;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+.p1 { left: 192px; }
+.p2 { left: 246px; transform: scaleX(-1); }
+.p3 { left: 300px; font-size: 1.2rem; }
+
+/* --- ground crew and vehicles --- */
+
+.ground { bottom: 4px; font-size: 0.95rem; z-index: 4; }
+.g1 { left: 66px;  animation: trundle 9s linear infinite; }
+.g2 { left: 200px; }
+.g3 { left: 288px; animation: trundle 12s linear infinite 3s; }
+
+/* The baggage truck drives slowly along the apron. */
+@keyframes trundle {
+    0%   { transform: translateX(0); }
+    50%  { transform: translateX(90px) scaleX(1); }
+    51%  { transform: translateX(90px) scaleX(-1); }
+    100% { transform: translateX(0)    scaleX(-1); }
+}
+
+/* The runway underneath. The dashes slide past faster as you speed up. */
+#runway {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    background: #57534e;
+    background-image: repeating-linear-gradient(
+        90deg,
+        #fef3c7 0 30px,
+        transparent 30px 70px
+    );
+    background-size: 100px 6px;
+    background-position: center;
+    background-repeat: repeat-x;
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.25);
+    z-index: 2;
+}
+
+/* Every real runway has a big number painted on it. */
+.rw-number {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    color: #fef3c7;
+    opacity: 0.75;
+    letter-spacing: 3px;
+}
+
+/* The white lines down each edge. */
+.rw-edge {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 4px;
+    background: #f8fafc;
+    opacity: 0.7;
+}
+.rw-edge.left  { left: 6px; }
+.rw-edge.right { right: 6px; }
+
+/* Things flying past that you have to steer around. */
+.hazard, .starbit {
+    position: absolute;
+    font-size: 1.7rem;
+    z-index: 3;
+}
+
+/* The flight strip, like the printed one clipped in a real cockpit. */
+#flight-strip {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #fef3c7;
+    color: #78350f;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    padding: 6px 12px;
+    border: 2px dashed #d97706;
+}
+
+/* ---------- The cabin behind you ---------- */
+
+#cabin {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 14px;
+    padding: 8px 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cabin-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.62rem;
+    opacity: 0.75;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* The seats. Two rows of faces that change as the flight goes. */
+#cabin-seats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1.1;
+    min-height: 38px;
+}
+
+#cabin-seats span { transition: transform 0.2s ease; }
+
+/* A jolt runs through the cabin when you hit something. */
+#cabin-seats.jolt span { animation: seatShake 0.35s ease; }
+
+@keyframes seatShake {
+    0%, 100% { transform: translateY(0); }
+    30%      { transform: translateY(-4px) rotate(-8deg); }
+    70%      { transform: translateY(3px)  rotate(8deg); }
+}
+
+.cabin-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+}
+
+/* The seatbelt sign, lit or dark like the real one. */
+.belt {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: #334155;
+    color: #64748b;
+}
+
+.belt.on {
+    background: #fbbf24;
+    color: #78350f;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+}
+
+#pa-btn {
+    font-size: 0.62rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    box-shadow: none;
+}
+
+/* Your co-pilot, sitting next to you calling things out. */
+#copilot {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 14px;
+    padding: 8px 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+#copilot-face { font-size: 1.7rem; }
+
+#copilot-says {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    flex: 1;
+}
+
+/* A quick flash when they say something new, so you notice it. */
+#copilot.talking { animation: copilotPing 0.4s ease; }
+
+@keyframes copilotPing {
+    0%   { transform: scale(1);    background: rgba(255, 255, 255, 0.9); }
+    45%  { transform: scale(1.02); background: #fef08a; }
+    100% { transform: scale(1);    background: rgba(255, 255, 255, 0.9); }
+}
+
+#fly-label { font-size: 0.86rem; text-align: center; min-height: 20px; opacity: 0.9; }
+
+#checklist { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+
+.check-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 1.15rem;
+    padding: 8px 11px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.85);
+    color: #1e293b;
+    border: 2px solid white;
+    box-shadow: none;
+}
+
+.check-btn span { font-size: 0.56rem; }
+
+/* Done, so it goes green and cannot be pressed again. */
+.check-btn.done { background: #16a34a; color: white; opacity: 0.9; }
+
+.fly-controls { display: flex; gap: 8px; align-items: center; justify-content: center; }
+
+.steer {
+    font-size: 1.5rem;
+    padding: 10px 22px;
+    border-radius: 14px;
+    background: #334155;
+    box-shadow: none;
+}
+
+/* The green stripe for a gentle landing. Matches LAND_FROM and LAND_TO
+   in script.js. */
+.land-zone {
+    position: absolute;
+    left: 55%;
+    width: 26%;
+    top: 0;
+    bottom: 0;
+    background: rgba(74, 222, 128, 0.85);
+}
+
+.bake-track {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.28);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+.bake-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(90deg, #60a5fa, #ef4444);
+    opacity: 0.9;
+}
+
+.bake-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    font-size: 0.6rem;
+    opacity: 0.75;
+}
+
+#land-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+/* ---------- Paris ---------- */
+
+#plane { font-size: 3rem; animation: flyIn 1.4s ease; }
+
+@keyframes flyIn {
+    from { transform: translateX(-260px) translateY(40px); opacity: 0; }
+    to   { transform: translateX(0)      translateY(0);    opacity: 1; }
+}
+
+#paris-scene {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    background: linear-gradient(180deg, #93c5fd, #fecdd3);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* The Eiffel Tower, built from three shapes stacked up. */
+.tower {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    margin-left: -46px;
+    width: 92px;
+    height: 150px;
+}
+
+.tower span { position: absolute; background: #78350f; }
+
+/* Each piece is a triangle, narrower as it goes up. */
+.tower-top {
+    bottom: 96px; left: 50%; margin-left: -12px;
+    width: 24px; height: 54px;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.tower-mid {
+    bottom: 46px; left: 50%; margin-left: -22px;
+    width: 44px; height: 52px;
+    clip-path: polygon(28% 0, 72% 0, 100% 100%, 0 100%);
+}
+
+.tower-legs {
+    bottom: 0; left: 0;
+    width: 92px; height: 48px;
+    /* The famous arch cut out of the bottom. */
+    clip-path: polygon(34% 0, 66% 0, 100% 100%, 72% 100%, 60% 40%, 40% 40%, 28% 100%, 0 100%);
+}
+
+.cloud { position: absolute; font-size: 1.6rem; animation: drift 9s linear infinite; }
+.c1 { top: 18px; left: -30px; }
+.c2 { top: 52px; left: -30px; animation-delay: 4.5s; }
+
+@keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(500px); }
+}
+
+.sun { position: absolute; top: 10px; right: 14px; font-size: 1.8rem; }
+
+.paris-things { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.paris-thing {
+    font-size: 1.6rem;
+    padding: 9px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    color: #1e293b;
+}
+
+#paris-result, #paris-text {
+    font-size: 0.95rem;
+    text-align: center;
+    line-height: 1.5;
+    min-height: 22px;
+}
+
+#paris-result { font-family: 'Fredoka One', cursive; }
+
+.back-link {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #1e293b;
+    text-decoration: none;
+    opacity: 0.65;
+    font-size: 0.82rem;
+}
+
+.seat { cursor: pointer; }
+.seat:hover { transform: scale(1.35); }
+
+/* ============================================================
+   THE AIRPORT SHUTTLE TRAIN
+   ============================================================ */
+
+#train-screen { justify-content: center; gap: 12px; }
+
+/* The reminder of where you need to get off. */
+#train-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0f172a;
+    color: #fbbf24;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    padding: 8px 16px;
+}
+
+#train-strip b { font-size: 1.1rem; color: #86efac; }
+#train-strip span:last-child { color: #e2e8f0; opacity: 0.9; }
+
+/* The station itself. */
+#platform {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    background: linear-gradient(180deg, #1e293b 0%, #334155 62%, #475569 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.55);
+}
+
+/* The station name board hanging above the platform. */
+.station-sign {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1d4ed8;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    padding: 6px 18px;
+    border-radius: 5px;
+    border: 2px solid #93c5fd;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+}
+
+/* The train. It slides in from the right and out to the left. */
+#train {
+    position: absolute;
+    bottom: 62px;
+    left: 100%;
+    display: flex;
+    gap: 3px;
+    transition: left 1.6s ease-in-out;
+}
+
+.carriage {
+    position: relative;
+    width: 96px;
+    height: 52px;
+    background: linear-gradient(180deg, #f8fafc, #cbd5e1);
+    border-radius: 6px;
+    border-bottom: 4px solid #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+}
+
+/* The front carriage gets a rounded nose. */
+.carriage.front { border-radius: 6px 22px 22px 6px; }
+
+.car-window {
+    width: 22px;
+    height: 20px;
+    background: #38bdf8;
+    border-radius: 3px;
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* The doors slide open when the train stops. */
+.car-door {
+    width: 24px;
+    height: 34px;
+    background: #1e3a8a;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 2px #94a3b8;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+#train.open .car-door {
+    transform: scaleX(0.12);
+    opacity: 0.5;
+}
+
+.car-light {
+    width: 12px;
+    height: 12px;
+    background: #fde047;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #fde047;
+}
+
+/* The rail the train runs on. */
+#rail {
+    position: absolute;
+    bottom: 54px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: #0f172a;
+    box-shadow: inset 0 2px 0 #64748b;
+}
+
+/* The platform people stand on. */
+#platform-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    background: repeating-linear-gradient(
+        90deg,
+        #fbbf24 0 14px,
+        #78716c 14px 28px
+    );
+    background-size: 28px 5px;
+    background-repeat: repeat-x;
+    background-position: top;
+    background-color: #57534e;
+}
+
+.ppl { position: absolute; bottom: 8px; font-size: 1.5rem; }
+.w1 { left: 22px; }
+.w2 { left: 68px; }
+.w3 { right: 34px; }
+
+/* You. When you board, you slide over and fade into the train. */
+.you {
+    left: 46%;
+    transition: left 0.6s ease, opacity 0.5s ease, bottom 0.6s ease;
+}
+
+.you.aboard { left: 62%; bottom: 70px; opacity: 0; }
+
+#train-label {
+    font-size: 0.88rem;
+    text-align: center;
+    min-height: 22px;
+}
+
+/* ============================================================
+   THE DRIVER'S CAB
+   ============================================================ */
+
+#cab-screen { justify-content: flex-start; gap: 10px; padding-top: 14px; }
+
+#cab-strip {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: #14532d;
+    color: #86efac;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.66rem;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+/* The three dials in front of the driver. */
+#dash {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+}
+
+.dial {
+    flex: 1;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    box-shadow: inset 0 0 16px rgba(74, 222, 128, 0.15);
+}
+
+.dial.big { flex: 1.4; }
+
+.dial-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: #4ade80;
+    line-height: 1.1;
+}
+
+.dial.big .dial-num { font-size: 2rem; }
+
+/* Going too fast, so the numbers turn red. */
+.dial-num.over { color: #f87171; }
+
+.dial-label { font-size: 0.52rem; color: #94a3b8; letter-spacing: 0.5px; }
+
+/* --- the view down the track --- */
+
+#track-view {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 46%, #86efac 47%, #4d7c0f 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.3);
+}
+
+/* The signal on a post beside the track. */
+#signal {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    width: 18px;
+    padding: 3px;
+    background: #1f2937;
+    border-radius: 5px;
+    z-index: 3;
+}
+
+.lamp {
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin: 2px auto;
+    border-radius: 50%;
+    background: #374151;
+}
+
+.lamp.red.on   { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+.lamp.green.on { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+
+/* The station, which slides in from the right as you approach. */
+#track-station {
+    position: absolute;
+    right: -220px;
+    bottom: 34px;
+    width: 190px;
+    z-index: 2;
+}
+
+.plat-body {
+    display: block;
+    width: 190px;
+    height: 26px;
+    background: repeating-linear-gradient(
+        90deg, #fbbf24 0 12px, #a8a29e 12px 24px);
+    background-size: 24px 4px;
+    background-repeat: repeat-x;
+    background-position: top;
+    background-color: #a8a29e;
+    border-radius: 3px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+.plat-sign {
+    display: block;
+    background: #1d4ed8;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 3px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+}
+
+/* The mark you are trying to stop your front window at. */
+.stop-mark {
+    position: absolute;
+    left: 88px;
+    bottom: -16px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.5rem;
+    color: #7f1d1d;
+    white-space: nowrap;
+}
+
+/* Your train, sitting at the left of the view. */
+#cab-train {
+    position: absolute;
+    left: 22px;
+    bottom: 32px;
+    width: 78px;
+    height: 44px;
+    background: linear-gradient(180deg, #f8fafc, #94a3b8);
+    border-radius: 6px 20px 20px 6px;
+    border-bottom: 4px solid #475569;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    z-index: 3;
+}
+
+.cab-glass {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 26px;
+    height: 20px;
+    background: #38bdf8;
+    border-radius: 4px 12px 12px 4px;
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+
+.cab-front {
+    position: absolute;
+    right: 2px;
+    bottom: 4px;
+    width: 10px;
+    height: 8px;
+    background: #fde047;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fde047;
+}
+
+/* The rail, with sleepers that blur past faster the quicker you go. */
+#cab-rail {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: #57534e;
+    background-image: repeating-linear-gradient(
+        90deg, #3f3f46 0 6px, transparent 6px 22px);
+    background-size: 22px 10px;
+    z-index: 1;
+}
+
+/* --- the stopping meter --- */
+
+#stop-meter {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.stop-track {
+    position: relative;
+    width: 100%;
+    height: 22px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 999px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+}
+
+/* The green band you want your needle inside when you stop. */
+.stop-zone {
+    position: absolute;
+    left: 44%;
+    width: 14%;
+    top: 0;
+    bottom: 0;
+    background: rgba(74, 222, 128, 0.9);
+}
+
+.stop-needle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #f8fafc;
+    box-shadow: 0 0 8px #f8fafc;
+    left: 0;
+}
+
+#cab-label { font-size: 0.85rem; text-align: center; min-height: 20px; }
+
+/* ---------- The driving desk ---------- */
+
+#driving-desk {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 22px;
+    width: 100%;
+    background: linear-gradient(180deg, #44403c, #292524);
+    border-radius: 14px 14px 6px 6px;
+    padding: 12px 14px 10px;
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.12),
+                0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.lever-box, .wheel-box { text-align: center; }
+
+/* The slot a lever slides up and down in. */
+.lever-slot {
+    position: relative;
+    width: 22px;
+    height: 66px;
+    margin: 0 auto;
+    background: #1c1917;
+    border-radius: 11px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+}
+
+.lever-slot.brake { background: #450a0a; }
+
+/* The lever itself. script.js slides it by changing `top`. */
+.lever-stick {
+    position: absolute;
+    left: 50%;
+    margin-left: -4px;
+    top: 4px;
+    width: 8px;
+    height: 34px;
+    background: linear-gradient(90deg, #a8a29e, #e7e5e4, #78716c);
+    border-radius: 4px;
+    transition: top 0.18s ease;
+}
+
+.lever-knob {
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    margin-left: -10px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 35% 30%, #f8fafc, #64748b);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.lever-knob.red {
+    background: radial-gradient(circle at 35% 30%, #fca5a5, #b91c1c);
+}
+
+.lever-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.5rem;
+    color: #d6d3d1;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+/* The steering wheel, which turns as the train rolls. */
+#drive-wheel {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    border: 9px solid #1c1917;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #57534e, #292524);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6),
+                inset 0 0 8px rgba(0, 0, 0, 0.8);
+    /* script.js sets the turn speed by changing this. */
+    animation: wheelSpin 3s linear infinite;
+    animation-play-state: paused;
+}
+
+@keyframes wheelSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spoke {
+    position: absolute;
+    top: 50%;
+    left: -4px;
+    right: -4px;
+    height: 6px;
+    margin-top: -3px;
+    background: #44403c;
+    border-radius: 3px;
+}
+.s1 { transform: rotate(0deg); }
+.s2 { transform: rotate(60deg); }
+.s3 { transform: rotate(120deg); }
+
+.hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+    background: #78716c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* ---------- The switches ---------- */
+
+#switch-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+}
+
+.sw {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 1rem;
+    background: #292524;
+    color: #a8a29e;
+    border: 2px solid #57534e;
+    border-radius: 9px;
+    padding: 5px 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sw b { font-size: 0.45rem; letter-spacing: 1px; }
+
+/* A switch that is currently on. */
+.sw.on {
+    background: #14532d;
+    color: #86efac;
+    border-color: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+/* ---------- Real terminals and real people at the stations ---------- */
+
+/* The terminal building standing behind the platform. */
+.stn-building {
+    position: absolute;
+    bottom: 22px;
+    left: 8px;
+    width: 174px;
+    height: 62px;
+    background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    z-index: 0;
+}
+
+.stn-roof {
+    position: absolute;
+    top: -8px;
+    left: -5px;
+    right: -5px;
+    height: 12px;
+    background: linear-gradient(180deg, #7dd3fc, #0284c7);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* Rows of lit windows across the front. */
+.stn-windows {
+    position: absolute;
+    top: 12px;
+    left: 8px;
+    right: 8px;
+    height: 26px;
+    background-image: repeating-linear-gradient(
+        90deg, #fef08a 0 10px, transparent 10px 17px);
+    background-size: 17px 10px;
+    border-radius: 2px;
+}
+
+.stn-doors {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -22px;
+    width: 44px;
+    height: 16px;
+    background: #38bdf8;
+    border-radius: 3px 3px 0 0;
+    box-shadow: inset 0 0 0 2px #64748b;
+}
+
+/* The row of people standing on the platform. */
+.stn-people {
+    position: absolute;
+    bottom: 24px;
+    left: 10px;
+    display: flex;
+    gap: 3px;
+    font-size: 1.05rem;
+    z-index: 4;
+}
+
+.stn-people span {
+    transition: transform 0.7s ease, opacity 0.7s ease;
+}
+
+/* When the doors open, the ones getting on walk left into the train. */
+.stn-people span.boarding {
+    transform: translateX(-120px) scale(0.8);
+    opacity: 0;
+}
+
+/* Passengers you can see inside your own train. */
+.riders {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    display: flex;
+    gap: 1px;
+    font-size: 0.72rem;
+    z-index: 4;
+    max-width: 46px;
+    overflow: hidden;
+}
+
+/* The door on the side of your train, which slides open at a station. */
+.cab-door {
+    position: absolute;
+    left: 30px;
+    bottom: 4px;
+    width: 16px;
+    height: 30px;
+    background: #1e3a8a;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 2px #94a3b8;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform-origin: left center;
+}
+
+.cab-door.open { transform: scaleX(0.15); opacity: 0.45; }
+
+/* ============================================================
+   WIDE SCREENS
+
+   Everything above is built for a phone: one narrow column, things
+   stacked down the page. On a laptop that leaves big empty margins and
+   the view is tiny.
+
+   Below 1000px nothing changes. Above it, each screen becomes TWO
+   columns using grid-template-areas, which lets you draw the layout as
+   a little picture in the code and then tell each piece which square it
+   belongs in. The big view goes left, the controls go right.
+   ============================================================ */
+
+@media (min-width: 1000px) {
+
+    body { align-items: flex-start; }
+
+    #game {
+        max-width: 1180px;
+        border-radius: 0;
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .screen { padding: 20px 26px 60px; }
+
+    h1 { font-size: 2.6rem; }
+
+    /* ---------- The check-in desk ---------- */
+
+    #desk-screen {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "topbar  topbar"
+            "board   card"
+            "label   actions"
+            "gates   gates";
+        gap: 16px 26px;
+        align-content: start;
+    }
+
+    #desk-screen .top-bar        { grid-area: topbar; font-size: 1rem; }
+    #desk-screen .board          { grid-area: board;  font-size: 0.95rem; align-self: start; }
+    #desk-screen .passenger-card { grid-area: card;   align-self: start; }
+    #desk-label                  { grid-area: label;  align-self: center; font-size: 1rem; }
+    #desk-screen .actions        { grid-area: actions; align-self: center; }
+    #gate-panel                  { grid-area: gates; }
+
+    #pass-face { font-size: 3.4rem; }
+    .passport  { font-size: 0.95rem; }
+
+    /* ---------- The shuttle train ---------- */
+
+    #train-screen {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        grid-template-areas:
+            "title  title"
+            "plat   strip"
+            "plat   label"
+            "plat   actions";
+        gap: 14px 26px;
+        align-content: start;
+    }
+
+    #train-screen h2      { grid-area: title; }
+    #platform             { grid-area: plat; height: 330px; }
+    #train-strip          { grid-area: strip; font-size: 0.9rem; align-self: start; }
+    #train-label          { grid-area: label; font-size: 1.05rem; }
+    #train-screen .actions{ grid-area: actions; align-self: start; }
+
+    /* The train is bigger, so it needs longer carriages. */
+    .carriage { width: 150px; height: 78px; }
+    .car-window { width: 34px; height: 30px; }
+    .car-door   { width: 36px; height: 52px; }
+    #train  { bottom: 96px; }
+    #rail   { bottom: 86px; }
+    #platform-floor { height: 86px; }
+    .ppl { font-size: 2.1rem; }
+
+    /* ---------- The driver's cab ---------- */
+
+    #cab-screen {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr;
+        grid-template-areas:
+            "strip  strip"
+            "view   dash"
+            "view   meter"
+            "view   label"
+            "desk   switches"
+            "desk   actions";
+        gap: 14px 26px;
+        align-content: start;
+    }
+
+    #cab-strip           { grid-area: strip; font-size: 0.9rem; }
+    #track-view          { grid-area: view; height: 400px; }
+    #dash                { grid-area: dash; align-self: start; }
+    #stop-meter          { grid-area: meter; max-width: none; }
+    #cab-label           { grid-area: label; font-size: 1.05rem; }
+    #driving-desk        { grid-area: desk; }
+    #switch-row          { grid-area: switches; align-self: start; }
+    #cab-screen .actions { grid-area: actions; align-self: start; }
+
+    /* A bigger view means a bigger train and station. */
+    #cab-train  { width: 150px; height: 84px; bottom: 76px; }
+    .cab-glass  { width: 50px; height: 38px; top: 14px; right: 14px; }
+    .cab-door   { width: 30px; height: 56px; left: 56px; }
+    .cab-front  { width: 18px; height: 14px; }
+    #cab-rail   { bottom: 56px; height: 18px; }
+    #track-station { bottom: 76px; width: 340px; }
+    .plat-body  { width: 340px; height: 46px; }
+    .plat-sign  { font-size: 0.85rem; }
+    .stn-building { width: 320px; height: 120px; bottom: 40px; }
+    .stn-people { font-size: 1.7rem; bottom: 42px; }
+    .riders     { font-size: 1.1rem; max-width: 88px; }
+    .stop-mark  { font-size: 0.75rem; left: 160px; }
+
+    .dial-num          { font-size: 2.2rem; }
+    .dial.big .dial-num{ font-size: 3rem; }
+    .dial-label        { font-size: 0.7rem; }
+
+    #drive-wheel { width: 110px; height: 110px; }
+    .lever-slot  { width: 30px; height: 96px; }
+    .lever-stick { height: 50px; }
+
+    /* ---------- The cockpit ---------- */
+
+    #fly-screen {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        grid-template-areas:
+            "title  title"
+            "strip  cabin"
+            "dials  copilot"
+            "sky    label"
+            "sky    checklist"
+            "sky    controls"
+            "sky    pullup"
+            "sky    land";
+        gap: 12px 26px;
+        align-content: start;
+        overflow: visible;
+    }
+
+    #fly-title           { grid-area: title; }
+    #flight-strip        { grid-area: strip; font-size: 0.9rem; }
+    .cockpit-bar         { grid-area: dials; font-size: 1rem; }
+    #sky                 { grid-area: sky; height: 420px; max-height: none; }
+    #cabin               { grid-area: cabin; align-self: start; }
+    #copilot             { grid-area: copilot; align-self: start; }
+    #fly-label           { grid-area: label; font-size: 1.05rem; }
+    #checklist           { grid-area: checklist; align-self: start; }
+    #fly-controls        { grid-area: controls; align-self: start; }
+    #pullup-btn          { grid-area: pullup; align-self: start; justify-self: center; }
+    #land-panel          { grid-area: land; align-self: start; }
+
+    /* The window is much bigger, so everything in it grows to match. */
+    #plane-you   { width: 118px; height: 96px; bottom: 40px; }
+    .pl-body     { width: 28px; height: 72px; margin-left: -14px; top: 9px; }
+    .pl-nose     { width: 28px; height: 19px; margin-left: -14px; }
+    .pl-wing     { width: 46px; height: 14px; top: 34px; }
+    .pl-engine   { width: 14px; height: 22px; top: 44px; }
+    .pl-tail     { width: 52px; height: 11px; margin-left: -26px; }
+    .pl-fin      { width: 12px; height: 28px; margin-left: -6px; }
+    .pl-windows  { width: 22px; height: 46px; margin-left: -11px; top: 25px; }
+    .pl-cockpit  { width: 18px; height: 12px; margin-left: -9px; top: 6px; }
+
+    #horizon     { height: 150px; bottom: 84px; }
+    .terminal    { width: 260px; height: 84px; }
+    .tower-ctrl  { height: 116px; width: 22px; right: 150px; }
+    .hangar      { width: 116px; height: 62px; }
+    #runway      { height: 84px; }
+    .rw-number   { font-size: 1.3rem; }
+    .hazard, .starbit { font-size: 2.3rem; }
+    #cabin-seats { font-size: 1.35rem; }
+
+    /* ---------- Paris ---------- */
+
+    #paris-scene { max-width: 620px; height: 280px; }
+    .tower { width: 140px; height: 220px; margin-left: -70px; }
+    .tower-top  { bottom: 140px; width: 36px; height: 80px; margin-left: -18px; }
+    .tower-mid  { bottom: 68px; width: 66px; height: 74px; margin-left: -33px; }
+    .tower-legs { width: 140px; height: 70px; }
+}

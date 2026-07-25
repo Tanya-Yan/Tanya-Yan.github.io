@@ -228,3 +228,17 @@ button:active {
     90% { transform: translateY(-70px) scale(1.6); opacity: 1; }
     100% { transform: translateY(-80px) scale(1.7); opacity: 0; }
 }
+
+/* ---------- Wide screens ----------
+   Asks how wide the window is, not what device it is, so a tablet or a
+   phone turned sideways gets the right layout too. */
+@media (min-width: 1000px) {
+    #game-container { max-width: 720px; border-radius: 28px; }
+    #start-screen h1, #game-over-screen h1 { font-size: 3.4rem; }
+    #player { font-size: 5rem; }
+}
+
+/* A short window, like a laptop in landscape, needs a shorter board. */
+@media (max-height: 620px) {
+    #game-container { max-height: 100vh; }
+}

@@ -415,3 +415,46 @@ button.ghost {
     opacity: 0.65;
     font-size: 0.82rem;
 }
+
+/* ---------- Wide screens ----------
+   Customer and pizza on the left, toppings on the right. */
+@media (min-width: 1000px) {
+    #shop { max-width: 1100px; }
+
+    #shop-screen {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "till    till"
+            "counter tray"
+            "build   tray"
+            "label   actions";
+        gap: 14px 28px;
+        align-content: start;
+        padding: 20px 26px 60px;
+    }
+
+    .till-bar   { grid-area: till; font-size: 1.05rem; }
+    .counter    { grid-area: counter; align-self: start; }
+    .build-area { grid-area: build; }
+    .tray       { grid-area: tray; align-self: start; }
+    #build-label{ grid-area: label; font-size: 1rem; align-self: center; }
+    #shop-screen .actions { grid-area: actions; align-self: center; }
+
+    #order-bubble { font-size: 1.1rem; padding: 14px 20px; }
+    #customer     { font-size: 4.2rem; }
+
+    /* A bigger pizza on a bigger screen. */
+    .size-small  { width: 190px; height: 190px; }
+    .size-medium { width: 250px; height: 250px; }
+    .size-large  { width: 300px; height: 300px; }
+    .topping     { font-size: 1.7rem; }
+
+    .item        { font-size: 0.72rem; padding: 9px 12px; }
+    .item .emoji { font-size: 1.7rem; }
+
+    .oven-window { height: 330px; }
+    #oven        { width: 400px; }
+    #reader      { width: 250px; }
+    .reader-screen { font-size: 1rem; min-height: 60px; }
+}
