@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ice Cream Shop</title>
+    <link rel="stylesheet" href="index.css?v=1">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="shop">
+
+    <!-- ===== Start ===== -->
+    <div id="start-screen" class="screen active">
+        <h1>Ice Cream Shop 🍦</h1>
+        <p>Customers come in and order.<br>Scoop it right, take their money, keep them happy!</p>
+        <p class="small">Tap a cone, tap the flavours, tap the toppings, then serve.</p>
+        <button id="open-btn">Open the shop!</button>
+    </div>
+
+    <!-- ===== The shop ===== -->
+    <div id="shop-screen" class="screen">
+
+        <div class="till-bar">
+            <span id="money">💵 $0</span>
+            <span id="served">🍦 0 served</span>
+            <span id="tips">⭐ $0 tips</span>
+        </div>
+
+        <!-- The customer and what they want -->
+        <div class="counter">
+            <div id="order-bubble">
+                <span id="order-text">...</span>
+            </div>
+            <div id="customer">🧍</div>
+            <div id="customer-name">Customer</div>
+        </div>
+
+        <!-- What you have built so far -->
+        <div class="build-area">
+            <div id="build">
+                <div id="toppings-layer"></div>
+                <div id="scoops"></div>
+                <div id="cone"></div>
+            </div>
+            <div id="build-label">Tap a cone to start</div>
+        </div>
+
+        <!-- Ingredients -->
+        <div class="tray">
+            <div class="tray-label">Cones</div>
+            <div class="tray-row" id="cones-row"></div>
+
+            <div class="tray-label">Scoops</div>
+            <div class="tray-row" id="flavours-row"></div>
+
+            <div class="tray-label">Toppings</div>
+            <div class="tray-row" id="toppings-row"></div>
+        </div>
+
+        <div class="actions">
+            <button id="serve-btn">✅ Serve it!</button>
+            <button id="bin-btn" class="ghost">🗑️ Start over</button>
+        </div>
+    </div>
+
+    <!-- ===== Paying ===== -->
+    <div id="pay-screen" class="screen">
+        <h2 id="pay-title">That's $6</h2>
+        <div id="pay-says">How would you like to pay?</div>
+
+        <!-- The card machine -->
+        <div id="reader">
+            <div class="reader-screen" id="reader-screen">READY</div>
+            <div class="reader-slot"></div>
+            <div class="reader-stripe"></div>
+            <div class="reader-buttons">
+                <button class="pay-btn" data-pay="tap">📶<span>Tap</span></button>
+                <button class="pay-btn" data-pay="insert">💳<span>Insert</span></button>
+                <button class="pay-btn" data-pay="swipe">↔️<span>Swipe</span></button>
+            </div>
+        </div>
+
+        <!-- Cash, when they pay with a note -->
+        <div id="cash-area" class="hidden">
+            <div id="cash-note">They hand you 💵 $20</div>
+            <div id="change-question">How much change do you give back?</div>
+            <div class="change-row" id="change-row"></div>
+        </div>
+
+        <div id="pay-result"></div>
+    </div>
+
+    <a class="back-link" href="../../">← Back to the arcade</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="script.js?v=1"></script>
+</body>
+</html>
